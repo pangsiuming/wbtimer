@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.DataPlatformXmlMapper" >
+
+    <select id="getExHalfCols" parameterType="com.eshore.wbtimer.executor.common.code.dataplatform.bean.ExHalfColsParam" resultType="com.eshore.wbtimer.executor.mapper.bean.ExHalfColsBean">
+        SELECT  *   FROM EX_HALF_COLS A WHERE  A.SERVICE_CODE = #{serviceCode,jdbcType=VARCHAR} ORDER BY ${extraOrderColumns}
+    </select>
+
+    <select id="getExItemHalf" parameterType="com.eshore.wbtimer.executor.service.bean.ExItemHalfParam" resultType="com.eshore.wbtimer.executor.mapper.bean.ExItemHalfBean">
+        SELECT * FROM EX_ITEM_HALF A WHERE  A.SERVICE_CODE = #{serviceCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getWsbsSbFiles" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbFilesBean"  resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbFilesBean">
+        SELECT  A.*,(SELECT STAFF_NAME FROM TB_SM_SYSSTAFF WHERE STAFF_ID=A.STAFF_ID) AS STAFF_NAME
+        FROM WSBS_SB_FILES A
+        <where> 1=1
+            <if test="sblsh!=null">
+               AND SBLSH = #{sblsh,jdbcType=VARCHAR}
+            </if>
+            <if test="dataSouce!=null">
+                AND DATA_SOUCE = #{dataSouce:VARCHAR}
+            </if>
+            <if test="wsbsSbFilesId!=null">
+                AND WSBS_SB_FILES_ID=#{wsbsSbFilesId,jdbcType=NUMERIC}
+            </if>
+        </where>
+    </select>
+    <select id="getWsbsSbInfo" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean"  resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT  A.*
+        FROM WSBS_SB A
+        <where>
+            1=1
+            <if test="sblsh!=null">
+              AND  SBLSH = #{sblsh,jdbcType=VARCHAR}
+            </if>
+            <if test="sblsh!=null">
+               AND SXBM = #{sxbm,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="getWsbsSbExtEndInfo" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbExtendBean"  resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbExtendBean">
+         SELECT  *
+       FROM WSBS_SB_EXTEND A
+       <where> 1=1
+           <if test="hjslbs!=null">
+              AND HJSLBS = #{hjslbs}
+           </if>
+           <if test="sblsh!=null">
+             AND  SBLSH = #{sblsh}
+           </if>
+       </where>
+
+    </select>
+    <select id="getGroupFormFileUpLoadData" parameterType="com.eshore.wbtimer.executor.mapper.bean.FormfileuploaddataBean"  resultType="com.eshore.wbtimer.executor.mapper.bean.FormfileuploaddataBean" >
+        SELECT A.trsequence
+        FROM FORMFILEUPLOADDATA A
+        <where> 1=1
+            <if test="businessid!=null">
+                AND  BUSINESSID = #{businessid,jdbcType=VARCHAR}
+            </if>
+            <if test="tablecode!=null">
+                AND TABLECODE = #{tablecode,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by A.trsequence
+    </select>
+
+</mapper>

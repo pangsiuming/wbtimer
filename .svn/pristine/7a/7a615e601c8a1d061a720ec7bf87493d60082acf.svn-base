@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WfWorkItemMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WfWorkItem" >
+    <constructor >
+      <idArg column="WORKITEMID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="WORKITEMNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="WORKITEMTYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="WORKITEMDESC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CURRENTSTATE" jdbcType="DECIMAL" javaType="java.lang.Short" />
+      <arg column="PARTICIPANT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PARTINAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PRIORITY" jdbcType="DECIMAL" javaType="java.lang.Short" />
+      <arg column="ISTIMEOUT" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="LIMITNUM" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="LIMITNUMDESC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATETIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="STARTTIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="ENDTIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="FINALTIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="REMINDTIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="ACTIONURL" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="ACTIVITYINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="STATESLIST" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TIMEOUTNUM" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="TIMEOUTNUMDESC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ACTIVITYINSTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSDEFID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="PROCESSDEFNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSCHNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ACTIVITYDEFID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ASSISTANT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ASSISTANTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BIZSTATE" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="ALLOWAGENT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ROOTPROCINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="ACTIONMASK" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="URLTYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="DEALRESULT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="DEALOPINION" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND3" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND4" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND5" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND6" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="EXTEND7" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="CATALOGUUID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CATALOGNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TENANT_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+
+  
+  <select id="selectWfWorkItemBySblsh" resultMap="BaseResultMap" parameterType="java.lang.String">
+     SELECT W.*
+     FROM WFWORKITEM W, WSBS_SB SB
+     WHERE SB.PROCESSINSTID = W.PROCESSINSTID
+     AND SB.SBLSH = #{sblsh,jdbcType=VARCHAR}
+     AND W.CURRENTSTATE IN (4, 10)
+  </select>
+
+</mapper>

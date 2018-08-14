@@ -1,0 +1,169 @@
+package com.eshore.wbtimer.executor.mapper.bean;
+
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.eshore.wbtimer.executor.service.bean.DBTableParamBean;
+
+/**
+ * ����Ϊ��ݿ��Ӧ��javabean���룬ͳһ���Զ�������ɣ��벻Ҫ�˹��޸� 
+ *
+ * @author hwe
+ * @version
+ * 
+ */
+@TableName("DZZZ_R_WSBS_BJ")
+public class DzzzRWsbsBjBean
+{
+	@TableId(value = "ID",type = IdType.INPUT)
+	private Long id;
+	private String sblsh;
+	private String sxbm;
+	private String sxmc;
+	private String licenseCode;     // ʵ��֤�ձ���
+	private String authCode;        // ��֤��
+	private String dzzzName;        // ֤��Ŀ¼���
+	private String dzzzCode;        // ֤��Ŀ¼����
+	private String status;          // DRAFT �ݰ�, REGISTERED ����֤��δǩ����, ISSUED ��ǩ��, ABOLISHED �ѷ�ֹ
+	private Date createTime;        // ����ʱ��
+	private Date registerTime;      // ��֤ʱ��
+	private Date issueTime;         // ǩ��ʱ��
+	private Date abolishTime;       // ����ʱ��
+	private String alertStatus;     // Ԥ��״̬:0��2Ԥ����3��ʱ
+	private Long restDate;          // ʣ��ʱ��
+	
+	private Date bjTime;         // ���ʱ��
+	
+
+	public Date getBjTime() {
+		return bjTime;
+	}
+
+	public void setBjTime(Date bjTime) {
+		this.bjTime = bjTime;
+	}
+
+	public Long getId() {
+	    return id;
+	}
+	
+	public void setId(Long id) {
+	    this.id = id;
+	}
+
+	public String getSblsh() {
+	    return sblsh;
+	}
+	
+	public void setSblsh(String sblsh) {
+	    this.sblsh = sblsh;
+	}
+
+	public String getSxbm() {
+	    return sxbm;
+	}
+	
+	public void setSxbm(String sxbm) {
+	    this.sxbm = sxbm;
+	}
+
+	public String getSxmc() {
+	    return sxmc;
+	}
+	
+	public void setSxmc(String sxmc) {
+	    this.sxmc = sxmc;
+	}
+
+	public String getLicenseCode() {
+	    return licenseCode;
+	}
+	
+	public void setLicenseCode(String licenseCode) {
+	    this.licenseCode = licenseCode;
+	}
+
+	public String getAuthCode() {
+	    return authCode;
+	}
+	
+	public void setAuthCode(String authCode) {
+	    this.authCode = authCode;
+	}
+
+	public String getDzzzName() {
+	    return dzzzName;
+	}
+	
+	public void setDzzzName(String dzzzName) {
+	    this.dzzzName = dzzzName;
+	}
+
+	public String getDzzzCode() {
+	    return dzzzCode;
+	}
+	
+	public void setDzzzCode(String dzzzCode) {
+	    this.dzzzCode = dzzzCode;
+	}
+
+	public String getStatus() {
+	    return status;
+	}
+	
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+	public Date getCreateTime() {
+	    return createTime;
+	}
+	
+	public void setCreateTime(Date createTime) {
+	    this.createTime = createTime;
+	}
+
+	public Date getRegisterTime() {
+	    return registerTime;
+	}
+	
+	public void setRegisterTime(Date registerTime) {
+	    this.registerTime = registerTime;
+	}
+
+	public Date getIssueTime() {
+	    return issueTime;
+	}
+	
+	public void setIssueTime(Date issueTime) {
+	    this.issueTime = issueTime;
+	}
+
+	public Date getAbolishTime() {
+	    return abolishTime;
+	}
+	
+	public void setAbolishTime(Date abolishTime) {
+	    this.abolishTime = abolishTime;
+	}
+
+	public String getAlertStatus() {
+	    return alertStatus;
+	}
+	
+	public void setAlertStatus(String alertStatus) {
+	    this.alertStatus = alertStatus;
+	}
+
+	public Long getRestDate() {
+	    return restDate;
+	}
+	
+	public void setRestDate(Long restDate) {
+	    this.restDate = restDate;
+	}
+
+}
+

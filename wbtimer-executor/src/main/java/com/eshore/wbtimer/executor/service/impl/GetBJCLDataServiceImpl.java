@@ -1,0 +1,302 @@
+package com.eshore.wbtimer.executor.service.impl;
+
+import com.eshore.wbtimer.common.utils.BeanUtil;
+import com.eshore.wbtimer.common.utils.StringUtil;
+import com.eshore.wbtimer.core.log.WbtimerJobLogger;
+import com.eshore.wbtimer.executor.common.net.WorkflowService;
+import com.eshore.wbtimer.executor.common.net.bean.Result;
+import com.eshore.wbtimer.executor.common.net.bean.SztbuttResult;
+import com.eshore.wbtimer.executor.common.utils.Axis2WebServiceUtil;
+import com.eshore.wbtimer.executor.common.utils.XmlUtil;
+import com.eshore.wbtimer.executor.handler.CLYJHandler;
+import com.eshore.wbtimer.executor.mapper.*;
+import com.eshore.wbtimer.executor.mapper.bean.*;
+import com.eshore.wbtimer.executor.service.GetBJCLDataService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * 描述:
+ *
+ * @author Zhangqian
+ * @create 2018/1/25 9:22
+ */
+@Service
+public class GetBJCLDataServiceImpl implements GetBJCLDataService {
+    private static Logger logger = LoggerFactory.getLogger(CLYJHandler.class);
+    @Autowired
+    ExHalfProcessMapper exHalfProcessMapper;
+    @Autowired
+    FrameTbConfigContentMapper frameTbConfigContentMapper;
+    @Autowired
+    WfWorkItemMapper wfWorkItemMapper;
+    @Autowired
+    ExHalfProcessHistMapper exHalfProcessHistMapper;
+    @Autowired
+    CommonMapper commonMapper;
+    @Autowired
+    WsbsBjclBeanMapper wsbsBjclBeanMapper;
+
+    @Override
+    public void startBjclData() throws Exception {
+        String sendXml = null; // 发送的xml
+        String methodName = "excute";
+        List<ExHalfProcess> halfProcessList = exHalfProcessMapper.selectExHalfProcess();
+
+        if (!CollectionUtils.isEmpty(halfProcessList)) {
+            FrameTbConfigContent cfgBean = getCfgContent("MISSION_MGR_URL", "FINISH_WORKITEM_URL");
+
+            String url = cfgBean.getContentvalue();
+            for (ExHalfProcess bean : halfProcessList) {
+                String sblsh = bean.getSblsh();
+                Long hjslbs = bean.getHjslbs();
+                String resultGetToExState = "";
+                String resultGetResultInfo = "";
+                try {
+                    // 对每一个流水号，调用数据管理平台接口查询是否有待办结环节数据
+                    sendXml = getQuerySqlXml(sblsh);
+                    String returnXml = Axis2WebServiceUtil.callDataPlatformQueryIntf(methodName, sendXml);
+                    //String returnXml = Axis2WebServiceUtil.callDataPlatformQueryIntf(methodName, sendXml);
+                    List<WsbsBjclBean> bjclList = readStringXmlBean(returnXml);
+                    if (CollectionUtils.isNotEmpty(bjclList) && bjclList.size() > 0) {
+                        // 如果有待办结环节数据，结束当前流水号在审批系统的当前环节-调用普元提供的接口结束
+                        String workitemId = "";
+
+                        WfWorkItem wfWorkItem = wfWorkItemMapper.selectWfWorkItemBySblsh(sblsh);
+                        if (wfWorkItem != null) {
+                            workitemId = wfWorkItem.getWorkitemid() + "";
+                        }
+                        WorkflowService ws = new WorkflowService();
+                        Result msg = ws.finishWorkItem(url, workitemId, "sysadmin");
+                        if (msg.isSuccessful()) {
+                            resultGetToExState = "0";
+                            resultGetResultInfo = "操作成功";
+                            logger.debug("操作成功：" + sblsh);
+                            updateLogState(sblsh, resultGetToExState, resultGetResultInfo);
+
+                            // 成功后，把记录数据移到历史表中
+                            ExHalfProcessHist histBean = new ExHalfProcessHist();
+                            BeanUtil.copyProperties(histBean, bean);
+                            exHalfProcessHistMapper.insert(histBean);//mp通用mapper切换
+                            // 插入待办结表
+                            long bjclHjslbs = commonMapper.selectSeqId("SQ_WSBS_SBSP");
+                            bjclList.get(0).setHjslbs(bjclHjslbs+"");
+                            wsbsBjclBeanMapper.insert(bjclList.get(0));//mp通用mapper切换
+                        } else {
+                            resultGetToExState = "1";
+                            resultGetResultInfo = "调用普元结束接口失败，失败原因：" + msg.getMessage();
+                            WbtimerJobLogger.log("调用普元结束接口失败，流水号[" + sblsh + "]" + "失败原因" + msg.getMessage());
+                        }
+                    } else if (CollectionUtils.isNotEmpty(bjclList) && bjclList.size() == 0) {
+                        // logger.debug("流水号[" + sblsh + "]"+result.getResultInfo());
+                        // 对每一个流水号，调用数据管理平台接口查询没有待办结环节数据，暂不执行任何操作
+                        // return ;
+                    } else if (CollectionUtils.isEmpty(bjclList)) {
+                        resultGetToExState = "1";
+                        resultGetResultInfo = "数据管理平台同步目标库失败，失败原因：";
+                    }
+                } catch (Exception e) {
+                    WbtimerJobLogger.log(e);
+                    resultGetToExState = "1";
+                }
+                updateLogState(sblsh, resultGetToExState, resultGetResultInfo);
+            }
+        }
+    }
+
+    public FrameTbConfigContent getCfgContent(String typeCode, String contentCode) {
+        HashMap<String,FrameTbConfigContent> resultHash = new HashMap<String,FrameTbConfigContent>();
+        List resultList = frameTbConfigContentMapper.selectContentByTypeCode(typeCode);
+
+        if (CollectionUtils.isNotEmpty(resultList)) {
+            for (int i=0;i<resultList.size();i++) {
+                FrameTbConfigContent cfgBean = (FrameTbConfigContent)resultList.get(i);
+                resultHash.put(cfgBean.getContentcode(), cfgBean);
+            }
+        }
+        if (!resultHash.containsKey(contentCode)) {
+            return null;
+        }
+        return resultHash.get(contentCode);
+    }
+
+    /**
+     * 更新日志状态
+     */
+    private void updateLogState(String sblsh, String state, String reslutInfo) {
+        ExHalfProcess param = new ExHalfProcess();
+        Date dt = new Date();//如果不需要格式,可直接用dt,dt就是当前系统时间
+        param.setSblsh(sblsh);
+        param.setProcessState(state);
+        param.setProcessMsg(reslutInfo);
+        param.setLastmodifyDate(dt);
+        exHalfProcessMapper.updateById(param);//mp通用mapper切换
+    }
+
+    //获取请求报文
+    private String getQuerySqlXml(String sblsh){
+        StringBuffer sb = new StringBuffer("<?xml version='1.0' encoding='utf-8'?>");
+        String xml = "<ExInfo><standardInfo process=\"QRY_SERV\">"
+                + "<Field FieldName=\"QRY_CODE\">EX_GDBS_BJCL</Field>"
+                + "<Field FieldName=\"SBLSH\">"+sblsh+"</Field>"
+                + "</standardInfo></ExInfo>";
+        sb.append(xml);
+        return sb.toString();
+    }
+
+    /**
+     * 解析XML字串，并封住Map
+     * @param returnXml 返回的XML字符串
+     * @return Map<String, Object>
+     * QRY_CODE = 查询方式
+     * CODE = 响应代码,0=成功,其他失败
+     * REASON = 错误原因
+     */
+    private SztbuttResult readStringXml(String returnXml) {
+        Document  document = null;
+        SztbuttResult result = new SztbuttResult();
+        try {
+            document = DocumentHelper.parseText(returnXml);
+            Element root = document.getRootElement();
+            //得到接口响应代码
+            Node code = root.selectSingleNode("standardInfo/Field[@FieldName='CODE']");
+            String codeText = code.getText();
+            //得到错误原因
+            Node reason = root.selectSingleNode("standardInfo/Field[@FieldName='REASON']");
+            String reasonText = reason.getText();
+            //如果调用成功才会有实际的数据
+            if(codeText.equals("0")){
+                List<Node> nodes = root.selectNodes("standardInfo/Field/Field");
+                if(CollectionUtils.isEmpty(nodes)){
+                    result.setToExState("2");
+                    result.setResultInfo("没有待办结事项");
+                }
+                for (Node node : nodes) {
+                    List<Node> list = node.selectNodes("Field");
+                    if(CollectionUtils.isNotEmpty(list)){
+                        // success
+                        result.setToExState("0");
+                        result.setResultInfo(reasonText);
+                    }
+                }
+            }else{
+                result.setToExState("1");
+                result.setResultInfo(reasonText);
+            }
+        } catch (Exception e) {
+            result.setToExState("1");
+            result.setResultInfo("解析xml字串失败"+e.getMessage());
+        }
+        return result;
+    }
+
+
+    /**
+     * 解析XML字串，返回待办结表对象
+     *
+     */
+    private List<WsbsBjclBean> readStringXmlBean(String returnXml) {
+        List<WsbsBjclBean> bjclList=new ArrayList<WsbsBjclBean>();
+        Document document = null;
+        SztbuttResult result = new SztbuttResult();
+        try {
+            document = DocumentHelper.parseText(returnXml);
+            Element root = document.getRootElement();
+            // 得到接口响应代码
+            Node code = root.selectSingleNode("standardInfo/Field[@FieldName='CODE']");
+            String codeText = code.getText();
+            // 得到错误原因
+            Node reason = root.selectSingleNode("standardInfo/Field[@FieldName='REASON']");
+            String reasonText = reason.getText();
+            // 如果调用成功才会有实际的数据
+            if (codeText.equals("0")) {
+                List<Node> nodes = root.selectNodes("standardInfo/Field/Field");
+                if (CollectionUtils.isEmpty(nodes)) {
+                    result.setToExState("2");
+                    result.setResultInfo("没有待办结事项");
+                }
+
+                for (Node node : nodes) {
+                    List<Node> list = node.selectNodes("Field");
+                    if (CollectionUtils.isNotEmpty(list)) {
+                        WsbsBjclBean bjcl = new WsbsBjclBean();
+                        for (Node el : list) {
+                            String name = StringUtil.handleNULL(el.valueOf("@FieldName").toUpperCase());
+                            String value = StringUtil.handleNULL(el.getText());
+                            value = XmlUtil.decodeString(value);
+                            if ("HJSLBS".equals(name)) {
+                                bjcl.setHjslbs(value);
+                            } else if ("SBLSH".equals(name)) {
+                                bjcl.setSblsh(value);
+                            } else if ("SXBM".equals(name)) {
+                                bjcl.setSxbm(value);
+                            } else if ("SBID".equals(name)) {
+                                bjcl.setSbid(value);
+                            } else if ("BJBMMC".equals(name)) {
+                                bjcl.setBjbmmc(value);
+                            } else if ("BJBMZZJDDM".equals(name)) {
+                                bjcl.setBjbmzzjddm(value);
+                            } else if ("XZQHDM".equals(name)) {
+                                bjcl.setXzqhdm(value);
+                            } else if ("BJJGDM".equals(name)) {
+                                bjcl.setBjjgdm(value);
+                            } else if ("BJJGMS".equals(name)) {
+                                bjcl.setBjjgms(value);
+                            } else if ("ZFHTHYY".equals(name)) {
+                                bjcl.setZfhthyy(value);
+                            } else if ("ZJGZMC".equals(name)) {
+                                bjcl.setZjgzmc(value);
+                            } else if ("ZJBH".equals(name)) {
+                                bjcl.setZjbh(value);
+                            } else if ("ZJYXQX".equals(name)) {
+                                bjcl.setZjyxqx(value);
+                            } else if ("FZGZDW".equals(name)) {
+                                bjcl.setFzgzdw(value);
+                            } else if ("SFJE".equals(name)) {
+                                bjcl.setSfje(new BigDecimal(StringUtil.handleNULL(value, "0")));
+                            } else if ("JEDWDM".equals(name)) {
+                                bjcl.setJedwdm(value);
+                            } else if ("BZ".equals(name)) {
+                                bjcl.setBz(value);
+                            } else if ("BYZD".equals(name)) {
+                                bjcl.setByzd(value);
+                            } else if ("STATUS".equals(name)) {
+                                bjcl.setStatus(value);
+                            } else if ("BJSJ".equals(name)) {
+                                String eDate = value;
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                Date bdate = formatter.parse(eDate);
+                                bjcl.setBjsj(bdate);
+                            } else if ("LOG_DATE".equals(name)) {
+                                String eDate = value;
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                Date bdate = formatter.parse(eDate);
+                                bjcl.setLogDate(bdate);
+                            }
+
+                        }
+                        bjclList.add(bjcl);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e.toString(),e);
+            return null;
+        }
+        return bjclList;
+    }
+}

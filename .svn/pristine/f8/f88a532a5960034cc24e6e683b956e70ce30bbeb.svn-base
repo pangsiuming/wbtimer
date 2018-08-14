@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.dzzzPageServiceMapper" >
+
+    <select id="queryCodeList" resultType="java.util.Map">
+          select t.dzzz_code from dzzz_items t group by t.dzzz_code
+    </select>
+    
+    <select id="queryInfoByCode"  resultType="com.eshore.wbtimer.executor.mapper.bean.DzzzItemsBean" parameterType="string">
+      select  t.*
+	 from DZZZ_ITEMS t  where  t.dzzz_code=#{dzzzCode}
+	 order by t.item_id asc
+    </select>
+
+</mapper>

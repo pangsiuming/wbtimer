@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: opensource.jsch:jsch:0.1.39">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../../../repository/opensource/jsch/jsch/0.1.39/jsch-0.1.39.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../../../repository/opensource/jsch/jsch/0.1.39/jsch-0.1.39-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../../../repository/opensource/jsch/jsch/0.1.39/jsch-0.1.39-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

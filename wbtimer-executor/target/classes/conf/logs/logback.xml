@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan 是否定期扫描xml文件， scanPeriod是说扫描周期是60秒-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 尽量别用绝对路径，如果带参数不同容器路径解释可能不同,以下配置参数在pom.xml里 -->
+    <property name="log.root.level" value="INFO" /> <!-- 日志级别 -->
+    <property name="log.error.level" value="ERROR" /> <!-- 其他日志级别 -->
+    <property name="log.base" value="../logs" /> <!-- 日志路径，这里是相对路径，web项目eclipse下会输出到eclipse的安装目录下，如果部署到linux上的tomcat下，会输出到tomcat/bin目录 下 -->
+    <property name="log.moduleName" value="wbtimer-project" />  <!-- 模块名称， 影响日志配置名，日志文件名 -->
+    <property name="log.max.size" value="20MB" /> <!-- 日志文件大小 -->
+
+
+    <!-- ConsoleApperder意思是从console中打印出来 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoding>UTF-8</encoding>
+        <!-- encoder编码规则 -->
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+        <!-- 过滤器，一个appender可以有多个 -->
+        <!-- 阈值过滤，就是log行为级别过滤，debug及debug以上的信息会被打印出来 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!-- 滚动日志文件，这个比较常用 -->
+    <appender name="file.all" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 设置日志不超过${log.max.size}时的保存路径，注意如果 是web项目会保存到Tomcat的bin目录 下 -->
+        <File>${log.base}/${log.moduleName}.log</File>
+        <!-- 按天新建log日志 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${log.base}/archive/${log.moduleName}_all_%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <!-- 当天的日志大小 超过${log.max.size}时,压缩日志并保存 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.max.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!--&lt;!&ndash; 设置日志的滚动时间 &ndash;&gt;
+            <maxHistory>${maxHistory}</maxHistory>-->
+        </rollingPolicy>
+        <!-- 日志输出的文件的格式  -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%logger{56}.%method:%L -%msg%n</pattern>
+        </layout>
+    </appender>
+
+
+    <!-- 只用保存输出error级别的日志 -->
+    <appender name="file.error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.base}/${log.moduleName}_err.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.base}/archive/${log.moduleName}_err_%d{yyyy-MM-dd}.%i.log.zip
+            </FileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.max.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{56}.%method:%L - %msg%n</pattern>
+        </layout>
+        <!-- 下面为配置只输出error级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>${log.error.level}</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- geelynote mybatis log 日志 -->
+    <!--addtivity:是否向上级logger传递打印信息。默认是true。最上层为root-->
+    <logger name="com.eshore.wbtimer.executor.mapper" additivity="false">
+        <level value="${log.root.level}" />
+        <appender-ref ref="console" />
+        <appender-ref ref="file.all" />
+        <appender-ref ref="file.error"/>
+    </logger>
+
+    <logger name="org.quartz" level="ERROR" />
+
+    <!-- root将级别为“DEBUG”及大于“DEBUG”的日志信息交给已经配置好的名为“Console”的appender处理，“Console”appender将信息打印到Console -->
+    <root level="${log.root.level}">
+        <!-- 标识这个appender将会添加到这个logger -->
+        <appender-ref ref="console" />
+        <appender-ref ref="file.all" />
+        <appender-ref ref="file.error"/>
+    </root>
+
+
+
+</configuration>

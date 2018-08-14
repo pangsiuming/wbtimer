@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.SbInfoUpdateMapper" >
+
+    <select id="qryDoingMissionSblsh" resultType="java.lang.Long">
+        SELECT
+        SB.HJSLBS
+        FROM WFACTIVITYINST ACTIVITY,
+        WSBS_SB        SB
+        WHERE  SB.PROCESSINSTID = ACTIVITY.PROCESSINSTID
+        AND (ACTIVITY.CURRENTSTATE = '2' OR
+        ACTIVITY.ACTIVITYTYPE = 'finish')
+        AND ACTIVITY.ACTIVITYDEFID !='ACCEPT'
+        AND ACTIVITY.ACTIVITYDEFID !='PREACCEPT'
+        AND NOT EXISTS (SELECT BJ.SBLSH
+        FROM WSBS_BJ BJ
+        WHERE BJ.SBLSH = SB.SBLSH
+        AND SB.ALERT_STATUS = 0)
+
+        union
+
+        select
+        HJSLBS
+        from wsbs_sb sb where EXISTS(select * from wsbs_bj bj where bj.sblsh = sb.sblsh
+        and sb.alert_status='0' and sb.promise_bj_date is null)
+    </select>
+
+    <select id="getOrderAlertInfo" resultType="com.eshore.wbtimer.executor.service.bean.ApplyOrderAlertBean">
+        SELECT SB.HJSLBS,
+        SB.SBLSH,
+        SB.SBSJ,
+        PROMISED_PERIOD_DAY  PROMISED_PERIOD,
+        PROMISED_PERIOD_TYPE,
+        SA.ALERT_DAY,
+        SA.ALERT_YELLOW,
+        SA.ALERT_RED,
+        SL.CREATE_TIME  SLSJ,
+        ACTIVITY.ACTIVITYDEFID,
+        (SELECT COUNT(*)
+        FROM WORKITEM_SUBPROCESS WS,
+        WFWORKITEM          WORKITEM1,
+        WFACTIVITYINST      ACTINST1,
+        WFPROCESSINST       PROCINST1
+        WHERE WORKITEM1.ACTIVITYINSTID = ACTINST1.ACTIVITYINSTID
+        AND ACTINST1.PROCESSINSTID = PROCINST1.PROCESSINSTID
+        AND WS.SUB_PROCESSINSTID = PROCINST1.PROCESSINSTID
+        AND WORKITEM1.CURRENTSTATE NOT IN (12, 13)
+        AND ACTINST1.CURRENTSTATE NOT IN (7, 8)
+        AND WS.PROCESSINSTID = SB.PROCESSINSTID
+        AND WS.SUB_PROCESS_TYPE = 'SUPPLEMENT') AS BZGZCS,
+        (SELECT SQ.TBCXZL
+        FROM WORKITEM_SUBPROCESS WS,
+        WSBS_TBCXSQ         SQ,
+        WFWORKITEM          WORKITEM1,
+        WFACTIVITYINST      ACTINST1,
+        WFPROCESSINST       PROCINST1
+        WHERE WORKITEM1.ACTIVITYINSTID = ACTINST1.ACTIVITYINSTID
+        AND ACTINST1.PROCESSINSTID = PROCINST1.PROCESSINSTID
+        AND WS.SUB_PROCESSINSTID = PROCINST1.PROCESSINSTID
+        AND SQ.PROCESSINSTID = WS.SUB_PROCESSINSTID
+        AND WORKITEM1.CURRENTSTATE NOT IN (12, 13)
+        AND ACTINST1.CURRENTSTATE NOT IN (7, 8)
+        AND WS.PROCESSINSTID = SB.PROCESSINSTID
+        AND WS.SUB_PROCESS_TYPE = 'SPECIAL'
+        AND ROWNUM = 1) AS TBCXCS,
+        SB.REAL_PROMISE_DAY,
+        SB.PROMISE_BJ_DATE,
+        SB.REST_DAY AS DELAY_DAY
+        FROM WSBS_SB SB, SERVICE_ITEM SI, WSBS_SL SL, SERVICE_ITEM_ALERT SA,
+        WFACTIVITYINST ACTIVITY
+        WHERE SB.SXBM = SI.SERVICE_CODE
+        AND SB.VERSION = SI.VERSION
+        AND SB.PROCESSINSTID = ACTIVITY.PROCESSINSTID
+        AND SI.SERVICE_ITEM_ID = SA.SERVICE_ITEM_ID(+)
+        AND SL.SBLSH = SB.SBLSH
+        AND (ACTIVITY.CURRENTSTATE = '2' OR ACTIVITY.ACTIVITYTYPE = 'finish')
+        AND SB.HJSLBS = #{hjslbs}
+        ORDER BY SL.CREATE_TIME DESC
+    </select>
+
+
+    <update id="updateWsbsSbPromiseBjTime" parameterType="java.util.Map">
+        UPDATE WSBS_SB
+        <set>
+            <if test=" lastModifyTime!= null">
+                LAST_MODIFY_TIME = #{lastModifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alertFlag != null">
+                ALERT_STATUS = #{alertFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="delayDay != null">
+                REST_DAY = #{delayDay,jdbcType=DECIMAL},
+            </if>
+            <if test=" realPromiseDay!= null">
+                REAL_PROMISE_DAY = #{realPromiseDay,jdbcType=DECIMAL},
+            </if>
+            <if test="promiseBjDate != null">
+                PROMISE_BJ_DATE = #{promiseBjDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="promiseBjDate == null">
+                PROMISE_BJ_DATE = #{promiseBjDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="zcx_alert_type != null">
+                ZCX_ALERT_TYPE = #{zcx_alert_type,jdbcType=VARCHAR},
+            </if>
+            <if test="zcx_alert_type == null">
+                ZCX_ALERT_TYPE = '0',
+            </if>
+            <if test=" zcx_rest_day!= null">
+                ZCX_REST_DAY = #{zcx_rest_day,jdbcType=VARCHAR},
+            </if>
+            <if test=" zcx_rest_day== null">
+                ZCX_REST_DAY = '',
+            </if>
+            <if test="zcx_qx != null">
+                ZCX_QX = #{zcx_qx,jdbcType=DECIMAL},
+            </if>
+            <if test="zcx_qx == null">
+                ZCX_QX = '',
+            </if>
+            <if test=" extraUpdateColumns!= null">
+                ${extraUpdateColumns}
+            </if>
+            MOD_DATE = SYSDATE
+        </set>
+        WHERE HJSLBS=#{hjslbs:NUMERIC}
+    </update>
+    <select id="selectZCSPHoliday"  resultType="java.util.HashMap">
+        SELECT HOLIDAY_ID,HOLIDAY_TYPE,REMARK,START_DATE,
+        END_DATE,STATE,MODI_STAFF,MODI_DATE
+        FROM HOLIDAY
+    </select>
+    <select id="getSuppInfo" resultType="com.eshore.wbtimer.executor.service.bean.SpecProgramExtBean"  >
+       	 SELECT A.SBLSH,
+       A.HJSLBS,
+       A.CREATE_TIME START_DATE,
+       A.BZSX      PERIOD_DAY,
+       ''    PERIOD_TYPE,
+       BZSL.CREATE_TIME    END_DATE,
+       '' AS TBCXZL,
+       '' AS TBCXSX,
+       '' AS SPJG,
+       '' AS SPJGA0,
+       NULL AS JGCSRQ
+     FROM WSBS_BZGZ A, WSBS_BZSL BZSL
+      WHERE A.SBLSH = #{sblsh}
+      AND A.PROCESSINSTID = BZSL.PROCESSINSTID(+)
+      AND  (A.CREATE_TIME&gt;=to_date(#{startDateStart,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss'))
+    </select>
+    <select id="getSpecProgramInfo" parameterType="string" resultType="com.eshore.wbtimer.executor.service.bean.SpecProgramExtBean">
+         SELECT A.SBLSH,
+       A.HJSLBS,
+       A.CREATE_TIME START_DATE,
+       A.TBCXSX      PERIOD_DAY,
+       A.TBCXSXDW    PERIOD_TYPE,
+       A.END_DATE    END_DATE,
+       A.TBCXZL,
+       A.TBCXSX,
+       JG.JGCSRQ     AS JGCSRQ,
+       JG.CLJGDM     AS SPJG,
+       SP.CLJGDM     AS SPJGA0
+     FROM WSBS_TBCXSQ A, WSBS_TBCXJG JG, WSBS_TBCXSP SP
+      WHERE A.SBLSH = #{sblsh,jdbcType=VARCHAR}
+      AND A.PROCESSINSTID = JG.PROCESSINSTID(+)
+      AND A.PROCESSINSTID = SP.PROCESSINSTID(+)
+    </select>
+</mapper>

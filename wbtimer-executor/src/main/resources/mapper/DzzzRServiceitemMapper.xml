@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.DzzzRServiceitemMapper" >
+
+  <select id="selectForServiceItem" resultType="java.util.Map" parameterType="java.util.Map">
+    select service_code as ServiceCode from service_item t
+                where t.status = #{status,jdbcType=VARCHAR}
+                and not exists (select 1 from DZZZ_R_SERVICEITEM m where m.service_code=t.service_code)
+  </select>
+
+</mapper>

@@ -1,0 +1,83 @@
+package com.eshore.wbtimer.executor.service.impl;
+
+import com.eshore.wbtimer.core.utils.PropertiesUtil;
+import com.eshore.wbtimer.executor.mapper.UpdateStartPYMapper;
+import com.eshore.wbtimer.executor.mapper.bean.WsbsFgblInfoBean;
+import com.eshore.wbtimer.executor.service.FgblspService;
+import com.eshore.wbtimer.executor.service.UpdateWsbsFgblInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 描述:回报申办流水号和项目编号
+ *
+ * @author Yangjinming
+ * @create 2018/1/31 15:23
+ */
+@Service
+public class UpdateWsbsFgblInfoServiceImpl implements UpdateWsbsFgblInfoService{
+    @Autowired
+    private UpdateStartPYMapper updateStartPYMapper;
+    @Autowired
+    private FgblspService fgblspService;
+    @Override
+    public void startUpdate() throws Exception{
+        //申请单流水号回报
+        Map<String,Object> param=new HashMap<>();
+        param.put("backApplyidSblsh", "0,2");
+        param.put("tjfs","1");
+        param.put("extraCondition","1");
+        List<Map<String, String>> alist= updateStartPYMapper.queryFGSLInfo(param);
+        //获取废弃码
+        String fqbm = PropertiesUtil.getString("wsconfig.properties","fqbm");
+        for (Map<String, String> map : alist) {
+            Object id=map.get("ID");
+            String applyId=map.get("APPLYID");
+            String sblsh=map.get("SBLSH");
+            String bparam="{size:1,backCodes:[{\"applyId\":\""+applyId+"\",\"sblsh\":\""+sblsh+"\"}]}";
+            String bresult=fgblspService.backCode(bparam);
+            WsbsFgblInfoBean bean = new WsbsFgblInfoBean();
+            if("0".equals(bresult))
+                bean.setBackApplyidSblsh("1");
+            else
+                bean.setBackApplyidSblsh("2");
+            bean.setWsbsFgblInfoId(Long.valueOf(id.toString()));
+            updateStartPYMapper.updateById(bean);//mp通用mapper切换
+        }
+        //申办单流水号与项目编号上报
+        Map<String,Object> param2=new HashMap<>();
+        param2.put("backProjcodeSblsh", "0,2");
+        param2.put("tjfs","0");
+        param2.put("extraCondition","1");
+        List<Map<String, String>> plist=updateStartPYMapper.queryFGSLInfo(param2);
+        for (Map<String, String> map : plist) {
+            WsbsFgblInfoBean bean = new WsbsFgblInfoBean();
+            String projCode=map.get("PROJCODE");
+            Object id=map.get("ID");
+            //如果项目编码为空，或是废弃码直接设置为已上报。发改不监控这类工单
+            if(null==projCode||"".equals(projCode)||"null".equals(projCode)|| projCode.indexOf(fqbm)!=-1){
+                bean.setWsbsFgblInfoId(Long.valueOf(id.toString()));
+                bean.setBackProjcodeSblsh("3");
+                updateStartPYMapper.updateById(bean);//mp通用mapper切换
+                continue;
+            }
+
+
+            String sblsh=map.get("SBLSH");
+            String adminOrg=map.get("ADMINORG");
+            String pparam="{size:1,codeRefes:[{\"projCode\":\""+projCode+"\",\"sblsh\":\""+sblsh+"\",\"adminOrg\":\""+adminOrg+"\"}]}";
+            String presult=fgblspService.saveItemAndProjCode(pparam);
+            if("0".equals(presult))
+                bean.setBackProjcodeSblsh("1");
+            else
+                bean.setBackProjcodeSblsh("2");
+
+            bean.setWsbsFgblInfoId(Long.valueOf(id.toString()));
+            updateStartPYMapper.updateById(bean);//mp通用mapper切换
+        }
+    }
+}

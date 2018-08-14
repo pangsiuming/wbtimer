@@ -1,0 +1,21 @@
+<ExInfo>
+	<standardInfo process="EX_GDBS_BJ">
+		<Field FieldName='SBLSH'>申办流水号</Field>
+		<Field FieldName='SXBM'>事项编码</Field>
+		<Field FieldName='BJBMMC'>办结部门名称</Field>
+		<Field FieldName='BJBMZZJDDM'>办结部门组织机构代码</Field>
+		<Field FieldName='XZQHDM'>办结部门行政区划代码</Field>
+		<Field FieldName='BJJGDM'>办结结果代码</Field>
+		<Field FieldName='BJJGMS'>办结结果描述</Field>
+		<Field FieldName='ZFHTHYY'>作废或退回原因</Field>
+		<Field FieldName='ZJGZMC'>证件/盖章名称</Field>
+		<Field FieldName='ZJBH'>证件编号</Field>
+		<Field FieldName='ZJYXQX'>证件有效期限</Field>
+		<Field FieldName='FZGZDW'>发证/盖章单位</Field>
+		<Field FieldName='SFJE'>收费金额</Field>
+		<Field FieldName='JEDWDM'>金额单位代码</Field>
+		<Field FieldName='BJSJ'>办结时间</Field>
+		<Field FieldName='BZ'>备注</Field>
+		<Field FieldName='BYZD'>备用字段</Field>
+	</standardInfo>
+</ExInfo>

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WsbsTbcxsqBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" >
+    <constructor >
+      <idArg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXBM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="XH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXZL" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXZLMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXPZR" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXQDLY" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQNR" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXSX" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="TBCXSXDW" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="XZQHDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="STAFF_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BZ" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BYZD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATE_TIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="DATA_SOURCE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="CLRGH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ALERT_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="END_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="SBXMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="NEEDSENDMSG" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SMSCONTENT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="REST_DAY" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="REST_NATURE_DAY" jdbcType="DECIMAL" javaType="java.lang.Long" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    HJSLBS, SBLSH, SXBM, XH, TBCXZL, TBCXZLMC, TBCXPZR, TBCXQDLY, SQNR, TBCXSX, TBCXSXDW, 
+    XZQHDM, SQRXM, STAFF_ID, BZ, BYZD, CREATE_TIME, DATA_SOURCE, PROCESSINSTID, CLRGH, 
+    CLRXM, ALERT_DATE, END_DATE, SBXMMC, NEEDSENDMSG, SMSCONTENT, REST_DAY, REST_NATURE_DAY
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ZH_YX_ZCSP.WSBS_TBCXSQ
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </select>
+
+  <select id="selectBySblah" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" resultMap="BaseResultMap">
+    SELECT  *
+    FROM WSBS_TBCXSQ A
+    WHERE sblsh =  #{sblsh,jdbcType=VARCHAR}
+    AND PROCESSINSTID =    #{processinstid,jdbcType=DECIMAL}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ZH_YX_ZCSP.WSBS_TBCXSQ
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" >
+    insert into ZH_YX_ZCSP.WSBS_TBCXSQ (HJSLBS, SBLSH, SXBM, 
+      XH, TBCXZL, TBCXZLMC, 
+      TBCXPZR, TBCXQDLY, SQNR, 
+      TBCXSX, TBCXSXDW, XZQHDM, 
+      SQRXM, STAFF_ID, BZ, 
+      BYZD, CREATE_TIME, DATA_SOURCE, 
+      PROCESSINSTID, CLRGH, CLRXM, 
+      ALERT_DATE, END_DATE, SBXMMC, 
+      NEEDSENDMSG, SMSCONTENT, REST_DAY, 
+      REST_NATURE_DAY)
+    values (#{hjslbs,jdbcType=DECIMAL}, #{sblsh,jdbcType=VARCHAR}, #{sxbm,jdbcType=VARCHAR}, 
+      #{xh,jdbcType=VARCHAR}, #{tbcxzl,jdbcType=VARCHAR}, #{tbcxzlmc,jdbcType=VARCHAR}, 
+      #{tbcxpzr,jdbcType=VARCHAR}, #{tbcxqdly,jdbcType=VARCHAR}, #{sqnr,jdbcType=VARCHAR}, 
+      #{tbcxsx,jdbcType=DECIMAL}, #{tbcxsxdw,jdbcType=VARCHAR}, #{xzqhdm,jdbcType=VARCHAR}, 
+      #{sqrxm,jdbcType=VARCHAR}, #{staffId,jdbcType=VARCHAR}, #{bz,jdbcType=VARCHAR}, 
+      #{byzd,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{dataSource,jdbcType=VARCHAR}, 
+      #{processinstid,jdbcType=DECIMAL}, #{clrgh,jdbcType=VARCHAR}, #{clrxm,jdbcType=VARCHAR}, 
+      #{alertDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, #{sbxmmc,jdbcType=VARCHAR}, 
+      #{needsendmsg,jdbcType=VARCHAR}, #{smscontent,jdbcType=VARCHAR}, #{restDay,jdbcType=DECIMAL}, 
+      #{restNatureDay,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" >
+    insert into ZH_YX_ZCSP.WSBS_TBCXSQ
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        HJSLBS,
+      </if>
+      <if test="sblsh != null" >
+        SBLSH,
+      </if>
+      <if test="sxbm != null" >
+        SXBM,
+      </if>
+      <if test="xh != null" >
+        XH,
+      </if>
+      <if test="tbcxzl != null" >
+        TBCXZL,
+      </if>
+      <if test="tbcxzlmc != null" >
+        TBCXZLMC,
+      </if>
+      <if test="tbcxpzr != null" >
+        TBCXPZR,
+      </if>
+      <if test="tbcxqdly != null" >
+        TBCXQDLY,
+      </if>
+      <if test="sqnr != null" >
+        SQNR,
+      </if>
+      <if test="tbcxsx != null" >
+        TBCXSX,
+      </if>
+      <if test="tbcxsxdw != null" >
+        TBCXSXDW,
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM,
+      </if>
+      <if test="sqrxm != null" >
+        SQRXM,
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID,
+      </if>
+      <if test="bz != null" >
+        BZ,
+      </if>
+      <if test="byzd != null" >
+        BYZD,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE,
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID,
+      </if>
+      <if test="clrgh != null" >
+        CLRGH,
+      </if>
+      <if test="clrxm != null" >
+        CLRXM,
+      </if>
+      <if test="alertDate != null" >
+        ALERT_DATE,
+      </if>
+      <if test="endDate != null" >
+        END_DATE,
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC,
+      </if>
+      <if test="needsendmsg != null" >
+        NEEDSENDMSG,
+      </if>
+      <if test="smscontent != null" >
+        SMSCONTENT,
+      </if>
+      <if test="restDay != null" >
+        REST_DAY,
+      </if>
+      <if test="restNatureDay != null" >
+        REST_NATURE_DAY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        #{hjslbs,jdbcType=DECIMAL},
+      </if>
+      <if test="sblsh != null" >
+        #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xh != null" >
+        #{xh,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxzl != null" >
+        #{tbcxzl,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxzlmc != null" >
+        #{tbcxzlmc,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxpzr != null" >
+        #{tbcxpzr,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxqdly != null" >
+        #{tbcxqdly,jdbcType=VARCHAR},
+      </if>
+      <if test="sqnr != null" >
+        #{sqnr,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxsx != null" >
+        #{tbcxsx,jdbcType=DECIMAL},
+      </if>
+      <if test="tbcxsxdw != null" >
+        #{tbcxsxdw,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrxm != null" >
+        #{sqrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null" >
+        #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="alertDate != null" >
+        #{alertDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="sbxmmc != null" >
+        #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="needsendmsg != null" >
+        #{needsendmsg,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="restDay != null" >
+        #{restDay,jdbcType=DECIMAL},
+      </if>
+      <if test="restNatureDay != null" >
+        #{restNatureDay,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" >
+    update ZH_YX_ZCSP.WSBS_TBCXSQ
+    <set >
+      <if test="sblsh != null" >
+        SBLSH = #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        SXBM = #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xh != null" >
+        XH = #{xh,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxzl != null" >
+        TBCXZL = #{tbcxzl,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxzlmc != null" >
+        TBCXZLMC = #{tbcxzlmc,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxpzr != null" >
+        TBCXPZR = #{tbcxpzr,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxqdly != null" >
+        TBCXQDLY = #{tbcxqdly,jdbcType=VARCHAR},
+      </if>
+      <if test="sqnr != null" >
+        SQNR = #{sqnr,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxsx != null" >
+        TBCXSX = #{tbcxsx,jdbcType=DECIMAL},
+      </if>
+      <if test="tbcxsxdw != null" >
+        TBCXSXDW = #{tbcxsxdw,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrxm != null" >
+        SQRXM = #{sqrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        BZ = #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        BYZD = #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        CLRGH = #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        CLRXM = #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="alertDate != null" >
+        ALERT_DATE = #{alertDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        END_DATE = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="needsendmsg != null" >
+        NEEDSENDMSG = #{needsendmsg,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        SMSCONTENT = #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="restDay != null" >
+        REST_DAY = #{restDay,jdbcType=DECIMAL},
+      </if>
+      <if test="restNatureDay != null" >
+        REST_NATURE_DAY = #{restNatureDay,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean" >
+    update ZH_YX_ZCSP.WSBS_TBCXSQ
+    set SBLSH = #{sblsh,jdbcType=VARCHAR},
+      SXBM = #{sxbm,jdbcType=VARCHAR},
+      XH = #{xh,jdbcType=VARCHAR},
+      TBCXZL = #{tbcxzl,jdbcType=VARCHAR},
+      TBCXZLMC = #{tbcxzlmc,jdbcType=VARCHAR},
+      TBCXPZR = #{tbcxpzr,jdbcType=VARCHAR},
+      TBCXQDLY = #{tbcxqdly,jdbcType=VARCHAR},
+      SQNR = #{sqnr,jdbcType=VARCHAR},
+      TBCXSX = #{tbcxsx,jdbcType=DECIMAL},
+      TBCXSXDW = #{tbcxsxdw,jdbcType=VARCHAR},
+      XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      SQRXM = #{sqrxm,jdbcType=VARCHAR},
+      STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      BZ = #{bz,jdbcType=VARCHAR},
+      BYZD = #{byzd,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=DATE},
+      DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      CLRGH = #{clrgh,jdbcType=VARCHAR},
+      CLRXM = #{clrxm,jdbcType=VARCHAR},
+      ALERT_DATE = #{alertDate,jdbcType=DATE},
+      END_DATE = #{endDate,jdbcType=DATE},
+      SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      NEEDSENDMSG = #{needsendmsg,jdbcType=VARCHAR},
+      SMSCONTENT = #{smscontent,jdbcType=VARCHAR},
+      REST_DAY = #{restDay,jdbcType=DECIMAL},
+      REST_NATURE_DAY = #{restNatureDay,jdbcType=DECIMAL}
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+</mapper>

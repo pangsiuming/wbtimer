@@ -1,0 +1,35 @@
+<ExInfo>
+	<standardInfo process="EX_GDBS_SB"><!--标准申办交换数据-->
+		<Field FieldName='SBLSH'>申办流水号</Field>
+		<Field FieldName='SXBM'>事项编码</Field>
+		<Field FieldName='SXMC'>事项名称</Field>
+		<Field FieldName='FSXBM'>父事项编码</Field>
+		<Field FieldName='FSXMC'>父事项名称</Field>
+		<Field FieldName='SQRLX'>申请人类型</Field>
+		<Field FieldName='SQRMC'>申请人名称</Field> 
+		<Field FieldName='SQRZJHM'>申请人证件号码</Field>
+		<Field FieldName='SQRZJLX'>申请人证件号码</Field>
+		<Field FieldName='LXRXM'>联系人姓名</Field>
+		<Field FieldName='LXRZJLX'>联系人证件类型</Field>
+		<Field FieldName='LXRSFZJHM'>联系人身份证件号码</Field>
+		<Field FieldName='LXRSJ'>联系人手机</Field>
+		<Field FieldName='LXRYX'>联系人邮箱</Field>
+		<Field FieldName='SBXMMC'>申办项目名称</Field>
+		<Field FieldName='SBCLQD'>申办材料清单</Field>
+		<Field FieldName='TJFS'>提交方式</Field>
+		<Field FieldName='SBHZH'>申办回执号</Field>
+		<Field FieldName='SBSJ'>申办时间</Field>
+		<Field FieldName='SBJTWD'>申办具体网点</Field>
+		<Field FieldName='XZQHDM'>业务发生所在行政区划代码</Field>
+		<Field FieldName='SBBMZZJGDM'>申办部门组织机构代码</Field>
+		<Field FieldName='BMZZJDDM'>部门组织机构代码</Field>
+		<Field FieldName='YSBLSH'>原申办流水号</Field>
+		<Field FieldName='BZ'>备注</Field>
+		<Field FieldName='BYZD'>备用字段</Field>
+		<Field FieldName='LOGINNAME'>登陆用户名</Field>
+		<Field FieldName='QDFS'>渠道方式</Field>
+	</standardInfo>
+	<ItemInfo DeptCode="" WinCode="" ItemCode="" Action="1">
+		
+	</ItemInfo>
+</ExInfo>

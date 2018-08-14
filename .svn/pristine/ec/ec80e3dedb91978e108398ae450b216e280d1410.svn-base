@@ -1,0 +1,25 @@
+package com.eshore.wbtimer.executor.mapper;
+
+import com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 描述:
+ *
+ * @author Yangjinming
+ * @date 2018/1/24 14:48
+ */
+public interface FgblServiceMapper {
+    List<Map<String,Object>> selectFrameTBConfigContent();
+    List<Map<String,Object>> selectFgblInfos();
+    WsbsSbBean selectWsbsSbBySblsh(String sblsh);
+    String selectWsbsTbcxsqBySblsh(String sblsh);
+    String selectWsbsTbcxjgBySblsh(String sblsh);
+    String getCurrentWorkitemId(String sblsh);
+    String getStaffIdByZzjgdm(String zzjgdm);
+    String getSubProcessInstanceId(String sblsh);
+    String getSubWorkitemId(String subProcessInstanceId);
+    int insertBLJKLog(Map<String, Object> params);
+}

@@ -1,0 +1,18 @@
+### wbtimer-job admin address list, such as "http://address" or "http://address01,http://address02"
+#生产
+#wbtimer.job.admin.addresses=http://19.48.17.144:9833/wbtimer-admin/
+#测试
+wbtimer.job.admin.addresses=http://14.215.119.58:9833/wbtimer-admin/
+
+### wbtimer-handler executor address
+wbtimer.job.executor.appname=wbtimer-executor
+wbtimer.job.executor.ip=
+wbtimer.job.executor.port=9993
+
+### wbtimer-handler, access token
+wbtimer.job.accessToken=a3b4dc015a0a930f92312c7fc379589a
+
+### wbtimer-handler log path
+wbtimer.job.executor.logpath=../logs/handler-logs/
+### wbtimer-handler log retention days
+wbtimer.job.executor.logretentiondays=-1

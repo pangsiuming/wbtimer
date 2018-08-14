@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.FgblServiceMapper" >
+
+    <select id="selectFrameTBConfigContent"  resultType="java.util.Map">
+        select contentvalue from frame_tb_config_content t
+        where t.Contentcode = 'FGBL_SERVICE_SWITCH'
+    </select>
+    <select id="selectFgblInfos" resultType="java.util.Map">
+        select * from wsbs_fgbl_info fg
+        where exists
+	     	 ( select sb.sblsh from wsbs_sb sb, wfactivityinst act
+				 where sb.processinstid = act.processinstid
+				 and act.activitydefid = 'APPROVE_CB'
+			     and act.endtime is null
+				 and sb.sblsh = fg.sblsh )
+				 and not exists (select 1 from ex_item_half half where half.service_code = fg.sxbm)
+    </select>
+
+    
+    <select id="selectWsbsTbcxsqBySblsh" parameterType="string" resultType="string">
+        select t.sblsh from wsbs_tbcxsq t where t.sblsh =#{sblsh}
+    </select>
+    <select id="selectWsbsTbcxjgBySblsh" parameterType="string" resultType="string">
+        select t.sblsh from wsbs_tbcxjg t where t.sblsh = =#{sblsh}
+    </select>
+    <select id="selectWsbsSbBySblsh" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT sxbm,xzqhdm,sbxmmc FROM WSBS_SB
+        WHERE sblsh=#{sblsh}
+    </select>
+
+    <select id="getStaffIdByZzjgdm" parameterType="string" resultType="string">
+         select content.contentvalue
+				 from frame_tb_config_content content
+				 , frame_tb_config_type type
+				 where content.typeid = type.typeid
+				 and type.typecode = 'SP_PERMISS_CONFIG'
+				 and content.contentcode =#{zzjgdm}
+    </select>
+    <select id="getCurrentWorkitemId" parameterType="string" resultType="string">
+         select workitem.workitemid from wfworkitem workitem
+				 where workitem.processinstid =
+				 (select sb.processinstid from wsbs_sb sb
+				 where sb.sblsh = '"+sblsh+"')
+				 and workitem.endtime is null
+    </select>
+    <select id="getSubProcessInstanceId" parameterType="string" resultType="string">
+        select ws.sub_processinstid
+        from workitem_subprocess ws
+        where ws.processinstid =
+        (select sb.processinstid
+        from wsbs_sb sb
+        where sb.sblsh = #{sblsh})
+
+    </select>
+    <select id="getSubWorkitemId" parameterType="string" resultType="string">
+       select workitem.workitemid from wfworkitem workitem
+       where workitem.processinstid =#{subProcessInstanceId} and workitem.endtime is null
+    </select>
+    <insert id="insertBLJKLog" parameterType="java.util.Map">
+       insert into BLJK_LOG (BLJK_LOG_ID, JK_CLASS_NAME, JK_CLASS_METHOD,
+      SOURCE, CREATE_DATE, IS_SUCCESS,
+      DATA)
+    values (#{bljkLogId,jdbcType=DECIMAL}, #{jkClassName,jdbcType=VARCHAR}, #{jkClassMethod,jdbcType=VARCHAR},
+      #{source,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE}, #{isSuccess,jdbcType=VARCHAR},
+      #{data,jdbcType=BLOB})
+    </insert>
+
+</mapper>

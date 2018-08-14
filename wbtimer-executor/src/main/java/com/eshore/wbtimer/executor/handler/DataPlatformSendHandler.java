@@ -1,0 +1,26 @@
+package com.eshore.wbtimer.executor.handler;
+
+import com.eshore.wbtimer.core.biz.model.ReturnT;
+import com.eshore.wbtimer.core.handler.IJobHandler;
+import com.eshore.wbtimer.core.handler.annotation.JobHandler;
+import com.eshore.wbtimer.executor.service.DataPlatFormSendService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * 描述:数据交换-发送审批过程环节数据到数据管理平台
+ *
+ * @author Yangjinming
+ * @create 2018-01-12 17:34
+ */
+@JobHandler("dataPlatformSendHandler")
+@Component
+public class DataPlatformSendHandler extends IJobHandler {
+    @Autowired
+    private DataPlatFormSendService dataPlatFormSendService;
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        dataPlatFormSendService.startSendIntfData();
+        return ReturnT.SUCCESS;
+    }
+}

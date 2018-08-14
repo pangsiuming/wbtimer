@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.DataSendToStdMapperXmlMapper" >
+
+    <select id="querySbData"  resultType="java.util.HashMap">
+        SELECT
+        sb.hjslbs as hjslbs,
+        sb.sblsh as sblsh,
+        sb.sxbm as sxbm,
+        sb.sxmc as sxmc,
+        sb.sbxmmc  as sbxmmc,
+        sb.version as sxbbh,
+        sb.sqrlx as sqrlx,
+        sb.sqrzjlx  as sqrzjlx,
+        sb.sqrmc as sqrmc,
+        sb.sqrzjhm as sqrzjhm,
+        sb.lxrxm as lxrxm,
+        sb.lxrzjlx          as  lxrzjlx,
+        sb.lxrsfzjhm        as  lxrsfzjhm,
+        sb.lxrsj            as  lxrsj,
+        sb.lxryx            as  lxryx,
+        '无'           as  sbclqd,
+        sb.zzjgdm           as  sbbmzzjgdm,
+        sb.tjfs             as  tjfs,
+        sb.ysblsh           as  ysblsh,
+        '珠海分厅'           as  sbjtwd,
+        sb.sblsh    as sbhzh,
+        sb.xzqhdm           as  xzqhdm,
+        sb.loginname        as  useridcode,
+        sb.bz               as   bz,
+        sb.byzd             as   byzd,
+        to_char(sb.sbsj,'yyyy-MM-dd HH24:mm:ss')  as   sbsj,
+        sb.qdfs             as   qdfs,
+        sb.sbckdm           as  sbckdm,
+        sb.ckfwryzjhm       as  ckfwryzjhm,
+        sb.ckfwryzjxm       as  ckfwryzjxm,
+        decode( sb.sbjtwd, '珠海分厅','',sb.sbjtwd)  as YWFSJGDM,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sb.sblsh and o.field_id='zftzjhbh') as project_code,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sb.sblsh and o.field_id='Mail_CLDJFS') as cltjfs
+        FROM wsbs_sb sb, send_step_std sp
+        WHERE sb.hjslbs = sp.mission_id(+)
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE sb.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND sp.mission_id is null
+        and (sb.SUBMIT_STATUS='2' or  sb.SUBMIT_STATUS IS NULL)
+
+    </select>
+
+
+    <select id="querySbData_error"  resultType="java.util.HashMap">
+        SELECT
+        sb.hjslbs as hjslbs,
+        sb.sblsh as sblsh,
+        sb.sxbm as sxbm,
+        sb.sxmc as sxmc,
+        sb.sbxmmc  as sbxmmc,
+        sb.version as sxbbh,
+        sb.sqrlx as sqrlx,
+        sb.sqrzjlx  as sqrzjlx,
+        sb.sqrmc as sqrmc,
+        sb.sqrzjhm as sqrzjhm,
+        sb.lxrxm as lxrxm,
+        sb.lxrzjlx          as  lxrzjlx,
+        sb.lxrsfzjhm        as  lxrsfzjhm,
+        sb.lxrsj            as  lxrsj,
+        sb.lxryx            as  lxryx,
+        '无'             as  sbclqd,
+        sb.zzjgdm           as  sbbmzzjgdm,
+        sb.tjfs             as  tjfs,
+        sb.ysblsh           as  ysblsh,
+        '珠海分厅'           as  sbjtwd,
+        sb.sblsh    as sbhzh,
+        sb.xzqhdm           as  xzqhdm,
+        sb.loginname        as  useridcode,
+        sb.bz               as   bz,
+        sb.byzd             as   byzd,
+        to_char(sb.sbsj,'yyyy-MM-dd HH24:mm:ss')  as   sbsj,
+        sb.qdfs             as   qdfs,
+        sb.sbckdm           as  sbckdm,
+        sb.ckfwryzjhm       as  ckfwryzjhm,
+        sb.ckfwryzjxm       as  ckfwryzjxm,
+        decode( sb.sbjtwd, '珠海分厅','',sb.sbjtwd)  as YWFSJGDM,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sb.sblsh and o.field_id='zftzjhbh') as project_code,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sb.sblsh and o.field_id='Mail_CLDJFS') as cltjfs
+        from wsbs_sb sb, SEND_STEP_ERROR_STD sp
+        WHERE sb.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE sb.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        and (sb.SUBMIT_STATUS='2' or  sb.SUBMIT_STATUS IS NULL)
+
+    </select>
+
+    <select id="queryYslData"  resultType="java.util.HashMap">
+        select
+        ysl.hjslbs         as  hjslbs,
+        ysl.sblsh          as  sblsh,
+        ysl.sxbm           as  sxbm,
+        ysl.sblsh          as  ywlsh,
+        ysl.bmmc           as  yslbmmc,
+        ysl.clrgh          as  blrgh,
+        ysl.clrxm          as  blrxm,
+        decode(ysl.cljgdm,'1','1','2','2','3','3','2')as  yslztdm,
+        ysl.cljgms         as  bslyy,
+        ysl.ysljtdd        as  ysljtdd,
+        ysl.zzjgdm         as  yslbmzzjgdm,
+        ysl.xzqhdm         as  xzqhdm,
+        ysl.bjbzsm         as  bjbzsm,
+        to_char(ysl.create_time,'yyyy-MM-dd HH24:mm:ss')as  yslsj,
+        ysl.bz             as  bz,
+        ysl.byzd           as  byzd,
+        ysl.ywckdm         as  ywckdm,
+        ysl.ckfwryzjhm     as  ckfwryzjhm,
+        ysl.ckfwryzjxm     as  ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=ysl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_wsysl ysl, send_step_std sp
+        WHERE ysl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE ysl.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = ysl.SBLSH)
+
+    </select>
+
+    <select id="queryYslData_error"  resultType="java.util.HashMap">
+        select
+        ysl.hjslbs         as  hjslbs,
+        ysl.sblsh          as  sblsh,
+        ysl.sxbm           as  sxbm,
+        ysl.sblsh          as  ywlsh,
+        ysl.bmmc           as  yslbmmc,
+        ysl.clrgh          as  blrgh,
+        ysl.clrxm          as  blrxm,
+        decode(ysl.cljgdm,'1','1','2','2','3','3','2')as  yslztdm,
+        ysl.cljgms         as  bslyy,
+        ysl.ysljtdd        as  ysljtdd,
+        ysl.zzjgdm         as  yslbmzzjgdm,
+        ysl.xzqhdm         as  xzqhdm,
+        ysl.bjbzsm         as  bjbzsm,
+        to_char(ysl.create_time,'yyyy-MM-dd HH24:mm:ss')as  yslsj,
+        ysl.bz             as  bz,
+        ysl.byzd           as  byzd,
+        ysl.ywckdm         as  ywckdm,
+        ysl.ckfwryzjhm     as  ckfwryzjhm,
+        ysl.ckfwryzjxm     as  ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=ysl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_wsysl ysl, SEND_STEP_ERROR_STD sp
+        WHERE ysl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE ysl.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = ysl.SBLSH)
+
+    </select>
+
+
+    <select id="querySlData"   resultType="java.util.HashMap">
+        SELECT
+        sl.hjslbs        as  hjslbs,
+        sl.sblsh         as  sblsh,
+        sl.sxbm          as  sxbm,
+        sl.bmmc          as  slbmmc,
+        sl.sblsh         as  ywlsh,
+        sl.sblsh         as  slhzh,
+        decode(sl.cljgdm,'3','2','11','2','1')as  slztdm,
+        sl.cljgms        as  bslyy,
+        sl.zzjgdm        as  slbmzzjddm,
+        sl.xzqhdm        as  xzqhdm,
+        sl.xzqhdm     as  gxdxzqhdm,
+        sl.bz            as  bz,
+        sl.byzd          as  byzd,
+        to_char(sl.create_time,'yyyy-MM-dd HH24:mm:ss') as slsj,
+        sl.clrgh         as  blrgh,
+        sl.clrxm         as  blrxm,
+        sl.ywckdm        as  ywckdm,
+        sl.ckfwryzjhm    as  ckfwryzjhm,
+        sl.ckfwryzjxm    as  ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_sl sl, send_step_std sp
+        WHERE sl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE SL.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = sl.SBLSH)
+
+    </select>
+
+    <select id="querySlData_error"   resultType="java.util.HashMap">
+        SELECT
+        sl.hjslbs        as  hjslbs,
+        sl.sblsh         as  sblsh,
+        sl.sxbm          as  sxbm,
+        sl.bmmc          as  slbmmc,
+        sl.sblsh         as  ywlsh,
+        sl.sblsh         as  slhzh,
+        decode(sl.cljgdm,'3','2','11','2','1')as  slztdm,
+        sl.cljgms        as  bslyy,
+        sl.zzjgdm        as  slbmzzjddm,
+        sl.xzqhdm        as  xzqhdm,
+        sl.xzqhdm     as  gxdxzqhdm,
+        sl.bz            as  bz,
+        sl.byzd          as  byzd,
+        to_char(sl.create_time,'yyyy-MM-dd HH24:mm:ss') as slsj,
+        sl.clrgh         as  blrgh,
+        sl.clrxm         as  blrxm,
+        sl.ywckdm        as  ywckdm,
+        sl.ckfwryzjhm    as  ckfwryzjhm,
+        sl.ckfwryzjxm    as  ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=sl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_sl sl, SEND_STEP_ERROR_STD sp
+        WHERE sl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE sl.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = sl.SBLSH)
+
+    </select>
+
+    <select id="querySpclData"    resultType="java.util.HashMap">
+        select
+        spcl.hjslbs        as  hjslbs,
+        spcl.sblsh         as  sblsh,
+        spcl.sxbm          as  sxbm,
+        decode(spcl.sphjdm,'1','承办','2','审核','3','批准')as  sphjmc,
+        spcl.spbzh         as  spbzh,
+        spcl.bmmc          as  spbmmc,
+        spcl.sphjdm        as  sphjdm,
+        decode(spcl.cljgdm,'1','1','2','2','3','3','9')as  sphjztdm,
+        decode (spcl.cljgms,'','无'， spcl.cljgms )      as  spyj,
+        spcl.zzjgdm        as  spbmzzjdmd,
+        spcl.xzqhdm        as  xzqhdm,
+        spcl.bz            as  bz,
+        spcl.byzd          as  byzd,
+        to_char(spcl.create_time,'yyyy-MM-dd HH24:mm:ss')as spsj,
+        spcl.clrxm         as  sprxm,
+        '无'               as  sprzwdm,
+        '无'               as  sprzwmc,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=spcl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_spcl spcl, send_step_std sp
+        WHERE spcl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE spcl.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = SPCL.SBLSH)
+
+    </select>
+
+    <select id="querySpclData_error"   resultType="java.util.HashMap">
+        select
+        spcl.hjslbs        as  hjslbs,
+        spcl.sblsh         as  sblsh,
+        spcl.sxbm          as  sxbm,
+        decode(spcl.sphjdm,'1','承办','2','审核','3','批准')as  sphjmc,
+        spcl.spbzh         as  spbzh,
+        spcl.bmmc          as  spbmmc,
+        spcl.sphjdm        as  sphjdm,
+        decode(spcl.cljgdm,'1','1','2','2','3','3','9')as  sphjztdm,
+        decode (spcl.cljgms,'','无'， spcl.cljgms )      as  spyj,
+        spcl.zzjgdm        as  spbmzzjdmd,
+        spcl.xzqhdm        as  xzqhdm,
+        spcl.bz            as  bz,
+        spcl.byzd          as  byzd,
+        to_char(spcl.create_time,'yyyy-MM-dd HH24:mm:ss')as spsj,
+        spcl.clrxm         as  sprxm,
+        '无'               as  sprzwdm,
+        '无'               as  sprzwmc,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=spcl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_spcl spcl, SEND_STEP_ERROR_STD sp
+        WHERE spcl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE spcl.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = SPCL.SBLSH)
+
+    </select>
+
+    <select id="queryBzgzData"    resultType="java.util.HashMap">
+        select
+        bzgz.hjslbs           as   hjslbs,
+        bzgz.sblsh            as   sblsh,
+        bzgz.sxbm             as   sxbm,
+        bzgz.bzgzyy           as   bjgzyy,
+        bzgz.bjclqd           as   bjclqd,
+        bzgz.xzqhdm           as   xzqhdm,
+        bzgz.bz               as   bz,
+        bzgz.byzd             as   byzd,
+        to_char(bzgz.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjgzsj,
+        bzgz.clrxm            as   bjgzfcrxm,
+        bzgz.ywckdm           as   ywckdm,
+        bzgz.ckfwryzjhm       as   ckfwryzjhm,
+        bzgz.ckfwryzjxm       as   ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bzgz.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bzgz bzgz, send_step_std sp
+        WHERE bzgz.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE bzgz.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzgz.SBLSH)
+
+    </select>
+
+    <select id="queryBzgzData_error"   resultType="java.util.HashMap">
+        select
+        bzgz.hjslbs           as   hjslbs,
+        bzgz.sblsh            as   sblsh,
+        bzgz.sxbm             as   sxbm,
+        bzgz.bzgzyy           as   bjgzyy,
+        bzgz.bjclqd           as   bjclqd,
+        bzgz.xzqhdm           as   xzqhdm,
+        bzgz.bz               as   bz,
+        bzgz.byzd             as   byzd,
+        to_char(bzgz.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjgzsj,
+        bzgz.clrxm            as   bjgzfcrxm,
+        bzgz.ywckdm           as   ywckdm,
+        bzgz.ckfwryzjhm       as   ckfwryzjhm,
+        bzgz.ckfwryzjxm       as   ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bzgz.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bzgz bzgz, SEND_STEP_ERROR_STD sp
+        WHERE bzgz.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE bzgz.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzgz.SBLSH)
+
+    </select>
+
+    <select id="queryBzslData"   resultType="java.util.HashMap">
+        select
+        bzsl.hjslbs           as   hjslbs,
+        bzsl.sblsh            as   sblsh,
+        bzsl.sxbm             as   sxbm,
+        bzsl.xzqhdm           as   xzqhdm,
+        bzsl.bzsljtdd         as   bjsljtdd,
+        bzsl.bjclqd           as   bjclqd,
+        bzsl.xh               as   xh,
+        bzsl.bz               as   bz,
+        bzsl.byzd             as   byzd,
+        to_char(bzsl.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjsj,
+        bzsl.clrxm            as   bjslblrxm,
+        bzsl.ywckdm           as   ywckdm,
+        bzsl.ckfwryzjhm       as   ckfwryzjhm,
+        bzsl.ckfwryzjxm       as   ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bzsl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bzsl bzsl, send_step_std sp
+        WHERE bzsl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE bzsl.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzsl.SBLSH)
+
+    </select>
+
+    <select id="queryBzslData_error"   resultType="java.util.HashMap">
+        select
+        bzsl.hjslbs           as   hjslbs,
+        bzsl.sblsh            as   sblsh,
+        bzsl.sxbm             as   sxbm,
+        bzsl.xzqhdm           as   xzqhdm,
+        bzsl.bzsljtdd         as   bjsljtdd,
+        bzsl.bjclqd           as   bjclqd,
+        bzsl.xh               as   xh,
+        bzsl.bz               as   bz,
+        bzsl.byzd             as   byzd,
+        to_char(bzsl.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjsj,
+        bzsl.clrxm            as   bjslblrxm,
+        bzsl.ywckdm           as   ywckdm,
+        bzsl.ckfwryzjhm       as   ckfwryzjhm,
+        bzsl.ckfwryzjxm       as   ckfwryzjxm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bzsl.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bzsl bzsl, SEND_STEP_ERROR_STD sp
+        WHERE bzsl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE bzsl.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzsl.SBLSH)
+
+    </select>
+
+
+    <select id="queryTbcxsqData"   resultType="java.util.HashMap">
+        select
+        tbcxsq.hjslbs           as   hjslbs,
+        tbcxsq.sblsh            as   sblsh,
+        tbcxsq.sxbm             as   sxbm,
+        tbcxsq.xh               as   xh,
+        tbcxsq.tbcxzl           as   tbcxzl,
+        tbcxsq.tbcxzlmc         as   tbcxzlmc,
+        tbcxsq.tbcxqdly         as   tbcxqdly,
+        tbcxsq.sqnr             as   sqnr,
+        tbcxsq.tbcxsx           as   tbcxsx,
+        'G'                     as   tbcxsxdw,
+        tbcxsq.xzqhdm           as   xzqhdm,
+        tbcxsq.bz               as   bz,
+        tbcxsq.byzd             as   byzd,
+        to_char(tbcxsq.create_time,'yyyy-MM-dd HH24:mm:ss')as   tbcxksrq,
+        tbcxsq.clrxm            as   tbcxpzr,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=tbcxsq.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_tbcxsq tbcxsq, send_step_std sp
+        WHERE tbcxsq.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE tbcxsq.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxsq.SBLSH)
+
+    </select>
+
+
+    <select id="queryTbcxsqData_error"   resultType="java.util.HashMap">
+        select
+        tbcxsq.hjslbs           as   hjslbs,
+        tbcxsq.sblsh            as   sblsh,
+        tbcxsq.sxbm             as   sxbm,
+        tbcxsq.xh               as   xh,
+        tbcxsq.tbcxzl           as   tbcxzl,
+        tbcxsq.tbcxzlmc         as   tbcxzlmc,
+        tbcxsq.tbcxqdly         as   tbcxqdly,
+        tbcxsq.sqnr             as   sqnr,
+        tbcxsq.tbcxsx           as   tbcxsx,
+        'G'                     as   tbcxsxdw,
+        tbcxsq.xzqhdm           as   xzqhdm,
+        tbcxsq.bz               as   bz,
+        tbcxsq.byzd             as   byzd,
+        to_char(tbcxsq.create_time,'yyyy-MM-dd HH24:mm:ss')as   tbcxksrq,
+        tbcxsq.clrxm            as   tbcxpzr,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=tbcxsq.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_tbcxsq tbcxsq, SEND_STEP_ERROR_STD sp
+        WHERE tbcxsq.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE tbcxsq.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxsq.SBLSH)
+
+    </select>
+
+    <select id="queryTbcxjgData"    resultType="java.util.HashMap">
+        select
+        tbcxjg.hjslbs         as   hjslbs,
+        tbcxjg.sblsh          as   sblsh,
+        tbcxjg.sxbm           as   sxbm,
+        tbcxjg.xh             as   xh,
+        tbcxjg.tbcxjg         as   tbcxjg,
+        to_char(tbcxjg.jgcsrq,'yyyy-MM-dd HH24:mm:ss')as    jgcsrq,
+        to_char(tbcxjg.tbcxjsrq,'yyyy-MM-dd HH24:mm:ss')as   tbcxjsrq,
+        tbcxjg.tbcxsfje       as   tbcxsfje,
+        tbcxjg.jedwdm         as   jedwdm,
+        tbcxjg.xzqhdm         as   xzqhdm,
+        tbcxjg.bz             as   bz,
+        tbcxjg.byzd           as   byzd,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=tbcxjg.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_tbcxjg tbcxjg, send_step_std sp
+        WHERE tbcxjg.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE tbcxjg.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxjg.SBLSH)
+
+    </select>
+
+    <select id="queryTbcxjgData_error"    resultType="java.util.HashMap">
+        select
+        tbcxjg.hjslbs         as   hjslbs,
+        tbcxjg.sblsh          as   sblsh,
+        tbcxjg.sxbm           as   sxbm,
+        tbcxjg.xh             as   xh,
+        tbcxjg.tbcxjg         as   tbcxjg,
+        to_char(tbcxjg.jgcsrq,'yyyy-MM-dd HH24:mm:ss')as    jgcsrq,
+        to_char(tbcxjg.tbcxjsrq,'yyyy-MM-dd HH24:mm:ss')as   tbcxjsrq,
+        tbcxjg.tbcxsfje       as   tbcxsfje,
+        tbcxjg.jedwdm         as   jedwdm,
+        tbcxjg.xzqhdm         as   xzqhdm,
+        tbcxjg.bz             as   bz,
+        tbcxjg.byzd           as   byzd,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=tbcxjg.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_tbcxjg tbcxjg, SEND_STEP_ERROR_STD sp
+        WHERE tbcxjg.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE tbcxjg.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxjg.SBLSH)
+
+    </select>
+
+    <select id="queryBjData"   resultType="java.util.HashMap">
+        select
+        bj.hjslbs         as  hjslbs,
+        bj.sblsh          as  sblsh,
+        bj.sxbm           as  sxbm,
+        bj.bmmc           as  bjbmmc,
+        bj.zzjgdm         as  bjbmzzjddm,
+        bj.xzqhdm         as  xzqhdm,
+        decode(bj.cljgdm,'1','1','2','2','3','3','4','4','5','5','6','6','7','6','0','0','6')as  bjjgdm,
+        bj.cljgms         as  bjjgms,
+        bj.zjgzmc         as  zjgzmc,
+        bj.zjbh           as  zjbh,
+        bj.zjyxqx         as  zjyxqx,
+        bj.fzgzdw         as  fzgzdw,
+        decode(bj.sfje,'','0.00',bj.sfje)           as  sfje,
+        'CNY'         as  jedwdm,
+        bj.bz             as  bz,
+        bj.byzd           as  byzd,
+        to_char(bj.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjsj,
+        bj.bjclrxm        as  bjclrxm,
+        bj.bjclrgh        as  bjclrgh,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bj.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bj bj, send_step_std sp
+        WHERE bj.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE bj.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bj.SBLSH)
+
+    </select>
+
+
+    <select id="queryBjData_error"      resultType="java.util.HashMap">
+        select
+        bj.hjslbs         as  hjslbs,
+        bj.sblsh          as  sblsh,
+        bj.sxbm           as  sxbm,
+        bj.bmmc           as  bjbmmc,
+        bj.zzjgdm         as  bjbmzzjddm,
+        bj.xzqhdm         as  xzqhdm,
+        decode(bj.cljgdm,'1','1','2','2','3','3','4','4','5','5','6','6','7','6','0','0','6')as  bjjgdm,
+        bj.cljgms         as  bjjgms,
+        bj.zjgzmc         as  zjgzmc,
+        bj.zjbh           as  zjbh,
+        bj.zjyxqx         as  zjyxqx,
+        bj.fzgzdw         as  fzgzdw,
+        decode(bj.sfje,'','0.00',bj.sfje)           as  sfje,
+        'CNY'         as  jedwdm,
+        bj.bz             as  bz,
+        bj.byzd           as  byzd,
+        to_char(bj.create_time,'yyyy-MM-dd HH24:mm:ss')as  bjsj,
+        bj.bjclrxm        as  bjclrxm,
+        bj.bjclrgh        as  bjclrgh,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=bj.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_bj bj, SEND_STEP_ERROR_STD sp
+        WHERE bj.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE bj.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = BJ.SBLSH)
+
+    </select>
+
+    <select  id="queryLqdjData"    resultType="java.util.HashMap">
+        select
+        lqdj.hjslbs           as  hjslbs,
+        lqdj.sblsh            as  sblsh,
+        lqdj.sxbm             as  sxbm,
+        lqdj.lqrxm            as  lqrxm,
+        lqdj.lqrzjlx          as  lqrzjlx,
+        lqdj.lqrsfzjhm        as  lqrsfzjhm,
+        lqdj.lqfs             as  lqfs,
+        lqdj.yddz             as  yddz,
+        lqdj.xzqhdm           as  xzqhdm,
+        lqdj.bz               as  bz,
+        lqdj.byzd             as  byzd,
+        to_char(lqdj.create_time,'yyyy-MM-dd HH24:mm:ss')as  lqsj,
+        lqdj.ywckdm           as  ywckdm,
+        lqdj.ckfwryzjhm       as  ckfwryzjhm,
+        lqdj.ckfwryzjxm       as  ckfwryzjxm,
+        lqdj.bjbmzzjddm       as  bjbmzzjddm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=lqdj.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_lqdj lqdj, send_step_std sp
+        WHERE lqdj.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR_STD.MISSION_ID
+        FROM SEND_STEP_ERROR_STD
+        WHERE lqdj.HJSLBS = SEND_STEP_ERROR_STD.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = lqdj.SBLSH)
+
+    </select>
+
+    <select  id="queryLqdjData_error"  resultType="java.util.HashMap">
+        select
+        lqdj.hjslbs           as  hjslbs,
+        lqdj.sblsh            as  sblsh,
+        lqdj.sxbm             as  sxbm,
+        lqdj.lqrxm            as  lqrxm,
+        lqdj.lqrzjlx          as  lqrzjlx,
+        lqdj.lqrsfzjhm        as  lqrsfzjhm,
+        lqdj.lqfs             as  lqfs,
+        lqdj.yddz             as  yddz,
+        lqdj.xzqhdm           as  xzqhdm,
+        lqdj.bz               as  bz,
+        lqdj.byzd             as  byzd,
+        to_char(lqdj.create_time,'yyyy-MM-dd HH24:mm:ss')as  lqsj,
+        lqdj.ywckdm           as  ywckdm,
+        lqdj.ckfwryzjhm       as  ckfwryzjhm,
+        lqdj.ckfwryzjxm       as  ckfwryzjxm,
+        lqdj.bjbmzzjddm       as  bjbmzzjddm,
+        (select o.field_value from wsbs_sb_extend o where o.sblsh=lqdj.sblsh and o.field_id='zftzjhbh') as project_code
+        FROM wsbs_lqdj lqdj, SEND_STEP_ERROR_STD sp
+        WHERE lqdj.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP_STD.MISSION_ID
+        FROM SEND_STEP_STD
+        WHERE lqdj.HJSLBS = SEND_STEP_STD.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP_STD SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = lqdj.SBLSH)
+
+    </select>
+
+    <insert id="SEND_STEP_STD_insert">
+        INSERT INTO SEND_STEP_STD
+        (
+        MISSION_ID ,
+        STEP_TYPE ,
+        SEND_DATE,
+        SEND_XML
+        )
+        VALUES
+        (
+        #missionId:NUMERIC# ,
+        #stepType:VARCHAR# ,
+        #sendDate:TIMESTAMP# ,
+        #sendXml:CLOB#
+        )
+    </insert>
+
+
+
+
+</mapper>

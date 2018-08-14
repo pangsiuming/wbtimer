@@ -1,0 +1,11 @@
+package com.eshore.wbtimer.executor.service;
+
+import com.baomidou.mybatisplus.service.IService;
+import com.eshore.wbtimer.executor.mapper.bean.DzzzItemsBean;
+
+/**
+ * Created by wangyifan on 2018/4/8.
+ */
+public interface DzzzCshService  {
+    void startExecute() throws Exception;
+}

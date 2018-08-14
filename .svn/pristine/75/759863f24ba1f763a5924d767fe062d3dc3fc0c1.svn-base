@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.ExHalfProcessMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.ExHalfProcess" >
+    <constructor >
+      <idArg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="INIT_STEP_TYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CURRNT_STEP_TYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATE_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="LASTMODIFY_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="PROCESS_STATE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESS_MSG" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+    </constructor>
+  </resultMap>
+
+  <select id="selectExHalfProcess"  resultMap="BaseResultMap">
+      SELECT A.*
+      FROM EX_HALF_PROCESS A, WSBS_SB SB
+      WHERE (A.PROCESS_STATE IS NULL OR A.PROCESS_STATE != '0')
+      AND A.SBLSH = SB.SBLSH(+)
+      AND EXISTS (SELECT IH.SERVICE_CODE
+      FROM EX_ITEM_HALF IH
+      WHERE IH.SERVICE_CODE = SB.SXBM
+      AND IH.HJ_BJCL = '1')
+      ORDER BY A.CREATE_DATE
+  </select>
+  <select id="selectExHalfProcessFromWsbsBj"  resultMap="BaseResultMap">
+      SELECT A.*
+      FROM EX_HALF_PROCESS A, WSBS_SB SB
+      WHERE (A.PROCESS_STATE IS NULL OR A.PROCESS_STATE != '0')
+      AND A.SBLSH = SB.SBLSH(+)
+      AND EXISTS (SELECT IH.SERVICE_CODE
+      FROM EX_ITEM_HALF IH
+      WHERE IH.SERVICE_CODE = SB.SXBM
+      AND IH.HJ_WSYSL = '2' and IH.HJ_BJCL='0')
+      ORDER BY A.CREATE_DATE
+  </select>
+</mapper>

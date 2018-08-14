@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eshore.wbtimer.executor.mapper.MessageTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.MessageTemplate">
+    <constructor>
+      <idArg column="TEMPLATE_ID" javaType="java.lang.Long" jdbcType="DECIMAL" />
+      <arg column="TEMPLATE_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CONTENT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="MODI_STAFF" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="MODI_DATE" javaType="java.util.Date" jdbcType="DATE" />
+      <arg column="TEMPLATE_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ORG_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="IS_MUST" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    TEMPLATE_ID, TEMPLATE_CODE, CONTENT, MODI_STAFF, MODI_DATE, TEMPLATE_NAME, ORG_CODE, 
+    IS_MUST
+  </sql>
+
+  <select id="queryByTemplateCode" parameterType="string" resultMap="BaseResultMap">
+    SELECT  <include refid="Base_Column_List" /> FROM MESSAGE_TEMPLATE A
+    WHERE A.TEMPLATE_CODE = #{templateCode,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByParamsSelective" parameterType="com.eshore.wbtimer.executor.service.bean.MessageTemplateParamBean" resultType="com.eshore.wbtimer.executor.mapper.bean.MessageTemplate">
+    SELECT A.*,o.org_name
+     FROM MESSAGE_TEMPLATE A left join tb_sm_organ o on A.org_code=o.org_code
+    <where>
+        1=1
+      <if  test="templateId != null">
+       AND  TEMPLATE_ID = #{templateId}
+      </if>
+      <if test="templateCode != null">
+        <if test="templateCodeEQ!=null">
+            AND     UPPER(TEMPLATE_CODE) like concat(concat('%',#{templateCode}),'%')
+        </if>
+        <if test="templateCodeEQ==null">
+            AND   TEMPLATE_CODE = #{templateCode,jdbcType=VARCHAR}
+       </if>
+      </if>
+      <if test="templateName!=null">
+          AND lower(TEMPLATE_NAME) like concat(concat('%',#{templateName}),'%')
+      </if>
+      <if test="templateCodeLikeRange!=null">
+          AND TEMPLATE_CODE LIKE #{templateCodeLikeRange,jdbcType=VARCHAR}
+      </if>
+      <if test="content!=null">
+          AND  CONTENT = #{content,jdbcType=VARCHAR}
+      </if>
+      <if test="contentLikeRange!=null">
+          AND  CONTENT LIKE #{contentLikeRange,jdbcType=VARCHAR}
+      </if>
+      <if test="modiStaff!=null">
+          AND MODI_STAFF = #{modiStaff,jdbcType=VARCHAR}
+      </if>
+      <if test="modiStaffLikeRange!=null">
+          AND  MODI_STAFF LIKE #{modiStaffLikeRange,jdbcType=VARCHAR}
+      </if>
+      <if test="modiDate!=null">
+          AND (MODI_DATE &gt;=trunc(cast(#{modiDate,jdbcType=TIMESTAMP} as date),'DD') AND MODI_DATE &lt;trunc(cast(#{modiDate,jdbcType=TIMESTAMP} as date)+1,'DD'))
+      </if>
+      <if test="modiDateRange1!=null">
+          AND MODI_DATE &gt;=to_date(#{modiDateRange1,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')
+      </if>
+      <if test="modiDateRange2!=null">
+          AND MODI_DATE &lt;=to_date(#{modiDateRange2,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')
+      </if>
+      <if test="orgCode!=null">
+          AND A.ORG_CODE = #{orgCode,jdbcType=VARCHAR}
+      </if>
+      <if test="isMust!=null">
+         AND IS_MUST = #{isMust,jdbcType=VARCHAR}
+      </if>
+      <if test="rownum!=null and rownum>0">
+         AND ROWNUM &lt;= #{rownum}
+      </if>
+      <if test="extraCondition!=null">
+         AND ${extraCondition}
+      </if>
+      <if test="keyWord!=null">
+       AND (TEMPLATE_NAME like '%'||#{keyWord,jdbcType=VARCHAR}||'%'
+        or TEMPLATE_CODE like '%'||#{keyWord,jdbcType=VARCHAR}||'%'
+        or CONTENT like '%'||#{keyWord,jdbcType=VARCHAR}||'%')
+      </if>
+    </where>
+    <if test="extraOrderColumns!=null">
+      ORDER BY ${extraOrderColumns}
+    </if>
+    <if test="forUpdateFlag==1">
+      FOR UPDATE NOWAIT
+    </if>
+  </select>
+</mapper>

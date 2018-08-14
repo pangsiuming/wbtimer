@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/wbtimer-admin" />
+    <file type="web" url="file://$PROJECT_DIR$/wbtimer-executor" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0%E5%BA%93" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/%E6%B3%A8%E5%86%8C%E5%AE%A1%E6%89%B9%E5%BA%93" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/%E7%BB%BC%E5%90%88%E6%8E%A5%E5%8A%9E%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/%E7%BD%91%E5%8A%9E%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/branches" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/tags" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/wb_zhxmgl" />
+                  <option value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/wb_zhxmgl_v170331" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="http://192.168.115.19:10999/svn/SysCodeRepos/%E7%BD%91%E4%B8%8A%E5%8A%9E%E4%BA%8B%E5%A4%A7%E5%8E%85/%E7%8F%A0%E6%B5%B7%E7%BD%91%E5%8A%9E/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+</project>

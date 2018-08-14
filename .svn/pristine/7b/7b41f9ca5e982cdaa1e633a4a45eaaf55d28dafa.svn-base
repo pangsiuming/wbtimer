@@ -1,0 +1,316 @@
+package com.eshore.wbtimer.executor.common.utils;
+
+import com.eshore.wbtimer.core.log.WbtimerJobLogger;
+import com.eshore.wbtimer.executor.common.code.dataplatform.DataPlatformXmlHelperNew;
+import com.eshore.wbtimer.executor.common.code.dataplatform.bean.ExInfoBean;
+import com.eshore.wbtimer.executor.common.code.dataplatform.bean.FieldBean;
+import com.eshore.wbtimer.executor.enums.ExTableNameEnum;
+import com.eshore.wbtimer.executor.mapper.bean.*;
+import com.eshore.wbtimer.executor.service.bean.DBTableParamBean;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+/**
+ * 描述:
+ *
+ * @author Yangjinming
+ * @create 2018/1/31 17:10
+ */
+public class DataPlatformXmlUtil {
+    /**
+     * 获取发送接口xml模版
+     *
+     * @param target 发送的目标表 见ex_gdbs_**.xml
+     * @param source 发送源表 即审批系统处wsbs_**数据表
+     * @param isHalfExchange  0528扩展参数,true/false 决定是否半交换,true半交换则发送itemInfo数据
+     * @param serviceCode 0528扩展参数,如果isHalfExchange==true则需要半交换,根据serviceCode读取ex_half_cols表
+     * @return
+     */
+    public static String getSendTableXml(ExTableNameEnum target, DBTableParamBean source,
+                                         boolean isHalfExchange, String serviceCode) {
+        StringBuffer sb = new StringBuffer("<?xml version='1.0' encoding='utf-8'?>");
+        switch (target) {
+            case EX_SB: // 申办交换数据
+                sb.append(getSbXml((WsbsSbBean)RepalceSpecialCharUtil.replace((WsbsSbBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_WSYSL: // 网上预受理
+                sb.append(getWSSlXml((WsbsWsyslBean)RepalceSpecialCharUtil.replace((WsbsWsyslBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_SL: // 受理
+                sb.append(getSlXml((WsbsSlBean)RepalceSpecialCharUtil.replace((WsbsSlBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_SPCL: // 审批
+                sb.append(getSpXml((WsbsSpclBean)RepalceSpecialCharUtil.replace((WsbsSpclBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_BJGZ: // 补交告知
+                sb.append(getBjgzXml((WsbsBzgzBean)RepalceSpecialCharUtil.replace((WsbsBzgzBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_BJSL: // 补交受理
+                sb.append(getBjslXml((WsbsBzslBean)RepalceSpecialCharUtil.replace((WsbsBzslBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_TBCXSQ: // 特别程序申请
+                sb.append(getTbcxSqXml((WsbsTbcxsqBean)RepalceSpecialCharUtil.replace((WsbsTbcxsqBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_TBCXJG: // 特别程序申请结果
+                sb.append(getTbcxJgXml((WsbsTbcxjgBean)RepalceSpecialCharUtil.replace((WsbsTbcxjgBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_BJ: // 办结(必要)
+                sb.append(getBjXml((WsbsBjBean)RepalceSpecialCharUtil.replace((WsbsBjBean)source),isHalfExchange,serviceCode));
+                break;
+            case EX_LQDJ: // 领证登记
+                sb.append(getLqdjXml((WsbsLqdjBean)RepalceSpecialCharUtil.replace((WsbsLqdjBean)source),isHalfExchange,serviceCode));
+                break;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 申办
+     *
+     * @param wsbsSbBean
+     * @return
+     */
+    private static StringBuffer getSbXml(WsbsSbBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_SB.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            // 3.设置ItemInfo
+            if (isHalfExchange) { // 只有半交换，才封装itemInfo,ExFile节点
+                dpf.setItemInfoBeanEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm());
+                // 4.组装附件信息
+                dpf.setExFileEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm(),wsbsSbBean.getHjslbs());
+            }
+
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 网上预受理
+     *
+     * @param
+     */
+    private static StringBuffer getWSSlXml(WsbsWsyslBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_WSYSL.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            // 设置ItemInfo
+            if (isHalfExchange&&"1".equals(wsbsSbBean.getCljgdm())) { // 只有半交换，才封装itemInfo节点
+                dpf.setItemInfoBeanEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm());
+                // 4.组装附件信息
+                dpf.setExFileEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm(),wsbsSbBean.getHjslbs());
+            }
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+           WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 受理
+     *
+     * @param
+     */
+    private static StringBuffer getSlXml(WsbsSlBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_SL.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            // 设置ItemInfo
+            if (isHalfExchange&&"1".equals(wsbsSbBean.getCljgdm())) { // 只有半交换，才封装itemInfo节点
+                dpf.setItemInfoBeanEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm());
+                // 4.组装附件信息
+                dpf.setExFileEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm(),wsbsSbBean.getHjslbs());
+            }
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 审批
+     *
+     * @param
+     */
+    private static StringBuffer getSpXml(WsbsSpclBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_SPCL.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            // 设置ItemInfo
+            if (isHalfExchange) { // 只有半交换，才封装itemInfo节点
+                dpf.setItemInfoBeanEle(xmlBean, null, wsbsSbBean.getZzjgdm(),wsbsSbBean.getSblsh(),wsbsSbBean.getSxbm());
+            }
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 补证告知
+     *
+     * @param
+     */
+    private static StringBuffer getBjgzXml(WsbsBzgzBean wsbsSbBean, boolean isHalfExchange, String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_BJGZ.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+           WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 补证受理
+     *
+     * @param
+     */
+    private static StringBuffer getBjslXml(WsbsBzslBean wsbsSbBean,boolean isHalfExchange,String serviceCode ) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_BJSL.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 特别程序申请
+     *
+     * @param
+     */
+    private static StringBuffer getTbcxSqXml(WsbsTbcxsqBean wsbsSbBean, boolean isHalfExchange, String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_TBCXSQ.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 特别程序申请结果
+     *
+     * @param
+     */
+    private static StringBuffer getTbcxJgXml(WsbsTbcxjgBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_TBCXJG.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 办结(必要)
+     *
+     * @param
+     */
+    private static StringBuffer getBjXml(WsbsBjBean wsbsSbBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_BJ.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsSbBean);
+
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+           WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+    /**
+     * 领证登记
+     *
+     * @param
+     */
+    private static StringBuffer getLqdjXml(WsbsLqdjBean wsbsLqdjBean,boolean isHalfExchange,String serviceCode) {
+        StringBuffer sb = new StringBuffer();
+        try {
+            // 1.获取模版
+            DataPlatformXmlHelperNew dpf=new DataPlatformXmlHelperNew();
+            ExInfoBean xmlBean = dpf.getExBean(ExTableNameEnum.EX_LQDJ.getValue(),isHalfExchange,serviceCode);
+            // 2.设置模版参数
+            // 设置standarInfo
+            List<FieldBean> fields = xmlBean.getStandardInfoBean().getFields();
+            ReflectUtil.setBeanFields(fields, wsbsLqdjBean);
+
+            sb.append(xmlBean.toString());
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+        }
+        return sb;
+    }
+
+}
+

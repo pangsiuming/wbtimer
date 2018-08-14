@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WsbsSpclBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean" >
+    <constructor >
+      <idArg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXBM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPHJMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPBZH" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="BMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="STAFF_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPHJDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGMS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPRZWDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SPRZWMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZZJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="XZQHDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BZ" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BYZD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATE_TIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="DATA_SOURCE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="CLRGH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRZWDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRZWMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBXMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    HJSLBS, SBLSH, SXBM, SPHJMC, SPBZH, BMMC, SPRXM, STAFF_ID, SPHJDM, CLJGDM, CLJGMS, 
+    SPRZWDM, SPRZWMC, ZZJGDM, XZQHDM, BZ, BYZD, CREATE_TIME, DATA_SOURCE, PROCESSINSTID, 
+    CLRGH, CLRXM, CLRZWDM, CLRZWMC, SBXMMC
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSBS_SPCL
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </select>
+
+  <select id="selectBySblsh" resultMap="BaseResultMap" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean">
+    SELECT
+    *
+    FROM WSBS_SPCL A
+    WHERE sblsh = #{sblsh,jdbcType=VARCHAR}
+    and sxbm = #{sxbm,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from WSBS_SPCL
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean" >
+    insert into WSBS_SPCL (HJSLBS, SBLSH, SXBM, 
+      SPHJMC, SPBZH, BMMC, SPRXM, 
+      STAFF_ID, SPHJDM, CLJGDM, 
+      CLJGMS, SPRZWDM, SPRZWMC, 
+      ZZJGDM, XZQHDM, BZ, 
+      BYZD, CREATE_TIME, DATA_SOURCE, 
+      PROCESSINSTID, CLRGH, CLRXM, 
+      CLRZWDM, CLRZWMC, SBXMMC
+      )
+    values (#{hjslbs,jdbcType=DECIMAL}, #{sblsh,jdbcType=VARCHAR}, #{sxbm,jdbcType=VARCHAR}, 
+      #{sphjmc,jdbcType=VARCHAR}, #{spbzh,jdbcType=CHAR}, #{bmmc,jdbcType=VARCHAR}, #{sprxm,jdbcType=VARCHAR}, 
+      #{staffId,jdbcType=VARCHAR}, #{sphjdm,jdbcType=VARCHAR}, #{cljgdm,jdbcType=VARCHAR}, 
+      #{cljgms,jdbcType=VARCHAR}, #{sprzwdm,jdbcType=VARCHAR}, #{sprzwmc,jdbcType=VARCHAR}, 
+      #{zzjgdm,jdbcType=VARCHAR}, #{xzqhdm,jdbcType=VARCHAR}, #{bz,jdbcType=VARCHAR}, 
+      #{byzd,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{dataSource,jdbcType=VARCHAR}, 
+      #{processinstid,jdbcType=DECIMAL}, #{clrgh,jdbcType=VARCHAR}, #{clrxm,jdbcType=VARCHAR}, 
+      #{clrzwdm,jdbcType=VARCHAR}, #{clrzwmc,jdbcType=VARCHAR}, #{sbxmmc,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean" >
+    insert into WSBS_SPCL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        HJSLBS,
+      </if>
+      <if test="sblsh != null" >
+        SBLSH,
+      </if>
+      <if test="sxbm != null" >
+        SXBM,
+      </if>
+      <if test="sphjmc != null" >
+        SPHJMC,
+      </if>
+      <if test="spbzh != null" >
+        SPBZH,
+      </if>
+      <if test="bmmc != null" >
+        BMMC,
+      </if>
+      <if test="sprxm != null" >
+        SPRXM,
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID,
+      </if>
+      <if test="sphjdm != null" >
+        SPHJDM,
+      </if>
+      <if test="cljgdm != null" >
+        CLJGDM,
+      </if>
+      <if test="cljgms != null" >
+        CLJGMS,
+      </if>
+      <if test="sprzwdm != null" >
+        SPRZWDM,
+      </if>
+      <if test="sprzwmc != null" >
+        SPRZWMC,
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM,
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM,
+      </if>
+      <if test="bz != null" >
+        BZ,
+      </if>
+      <if test="byzd != null" >
+        BYZD,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE,
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID,
+      </if>
+      <if test="clrgh != null" >
+        CLRGH,
+      </if>
+      <if test="clrxm != null" >
+        CLRXM,
+      </if>
+      <if test="clrzwdm != null" >
+        CLRZWDM,
+      </if>
+      <if test="clrzwmc != null" >
+        CLRZWMC,
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        #{hjslbs,jdbcType=DECIMAL},
+      </if>
+      <if test="sblsh != null" >
+        #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="sphjmc != null" >
+        #{sphjmc,jdbcType=VARCHAR},
+      </if>
+      <if test="spbzh != null" >
+        #{spbzh,jdbcType=CHAR},
+      </if>
+      <if test="bmmc != null" >
+        #{bmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sprxm != null" >
+        #{sprxm,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null" >
+        #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="sphjdm != null" >
+        #{sphjdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgdm != null" >
+        #{cljgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgms != null" >
+        #{cljgms,jdbcType=VARCHAR},
+      </if>
+      <if test="sprzwdm != null" >
+        #{sprzwdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sprzwmc != null" >
+        #{sprzwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="clrzwdm != null" >
+        #{clrzwdm,jdbcType=VARCHAR},
+      </if>
+      <if test="clrzwmc != null" >
+        #{clrzwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean" >
+    update WSBS_SPCL
+    <set >
+      <if test="sblsh != null" >
+        SBLSH = #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        SXBM = #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="sphjmc != null" >
+        SPHJMC = #{sphjmc,jdbcType=VARCHAR},
+      </if>
+      <if test="spbzh != null" >
+        SPBZH = #{spbzh,jdbcType=CHAR},
+      </if>
+      <if test="bmmc != null" >
+        BMMC = #{bmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sprxm != null" >
+        SPRXM = #{sprxm,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="sphjdm != null" >
+        SPHJDM = #{sphjdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgdm != null" >
+        CLJGDM = #{cljgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgms != null" >
+        CLJGMS = #{cljgms,jdbcType=VARCHAR},
+      </if>
+      <if test="sprzwdm != null" >
+        SPRZWDM = #{sprzwdm,jdbcType=VARCHAR},
+      </if>
+      <if test="sprzwmc != null" >
+        SPRZWMC = #{sprzwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        BZ = #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        BYZD = #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        CLRGH = #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        CLRXM = #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="clrzwdm != null" >
+        CLRZWDM = #{clrzwdm,jdbcType=VARCHAR},
+      </if>
+      <if test="clrzwmc != null" >
+        CLRZWMC = #{clrzwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean" >
+    update WSBS_SPCL
+    set SBLSH = #{sblsh,jdbcType=VARCHAR},
+      SXBM = #{sxbm,jdbcType=VARCHAR},
+      SPHJMC = #{sphjmc,jdbcType=VARCHAR},
+      SPBZH = #{spbzh,jdbcType=CHAR},
+      BMMC = #{bmmc,jdbcType=VARCHAR},
+      SPRXM = #{sprxm,jdbcType=VARCHAR},
+      STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      SPHJDM = #{sphjdm,jdbcType=VARCHAR},
+      CLJGDM = #{cljgdm,jdbcType=VARCHAR},
+      CLJGMS = #{cljgms,jdbcType=VARCHAR},
+      SPRZWDM = #{sprzwdm,jdbcType=VARCHAR},
+      SPRZWMC = #{sprzwmc,jdbcType=VARCHAR},
+      ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      BZ = #{bz,jdbcType=VARCHAR},
+      BYZD = #{byzd,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=DATE},
+      DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      CLRGH = #{clrgh,jdbcType=VARCHAR},
+      CLRXM = #{clrxm,jdbcType=VARCHAR},
+      CLRZWDM = #{clrzwdm,jdbcType=VARCHAR},
+      CLRZWMC = #{clrzwmc,jdbcType=VARCHAR},
+      SBXMMC = #{sbxmmc,jdbcType=VARCHAR}
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+</mapper>

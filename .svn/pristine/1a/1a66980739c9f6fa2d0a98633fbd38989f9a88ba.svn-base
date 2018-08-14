@@ -1,0 +1,23 @@
+###  wbtimer admin db 生产环境
+#wbtimer.admin.db.url=jdbc:mysql://19.48.17.71:3306/wbtimer-jobproduce?useUnicode=true&characterEncoding=UTF-8
+#wbtimer.admin.db.user=wbtimer
+#wbtimer.admin.db.password=zhwbwbtimer
+
+##  wbtimer admin db 泰兴测试环境
+wbtimer.admin.db.url=jdbc:mysql://14.215.113.130:3306/wbtimer-job?useUnicode=true&characterEncoding=UTF-8
+wbtimer.admin.db.user=root
+wbtimer.admin.db.password=root
+
+### wbtimer-handler email
+wbtimer.admin.mail.host=smtp.qq.com
+wbtimer.admin.mail.port=465
+wbtimer.admin.mail.username=abc@qq.com
+wbtimer.admin.mail.password=abc
+wbtimer.admin.mail.sendNick=《任务调度中心》
+
+### wbtimer-admin login
+wbtimer.admin.login.username=admin
+wbtimer.admin.login.password=123456Qw
+
+### wbtimer-handler, access token
+wbtimer.job.accessToken=a3b4dc015a0a930f92312c7fc379589a

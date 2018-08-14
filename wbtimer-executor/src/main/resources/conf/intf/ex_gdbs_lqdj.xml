@@ -1,0 +1,14 @@
+<ExInfo>
+	<standardInfo process="EX_GDBS_LQDJ">
+		<Field FieldName='SBLSH'>申办流水号</Field>
+		<Field FieldName='SXBM'>事项编码</Field>
+		<Field FieldName='LQRXM'>领取人姓名</Field>
+		<Field FieldName='LQRZJLX'>领取人证件类型</Field>
+		<Field FieldName='LQRSFZJHM'>领取人身份证号码</Field>
+		<Field FieldName='LQFS'>领取方式</Field>
+		<Field FieldName='LQSJ'>领取时间</Field>
+		<Field FieldName='XZQHDM'>领取登记部门行政区划代码</Field>
+		<Field FieldName='BZ'>备注</Field>
+		<Field FieldName='BYZD'>备用字段</Field>
+	</standardInfo>
+</ExInfo>

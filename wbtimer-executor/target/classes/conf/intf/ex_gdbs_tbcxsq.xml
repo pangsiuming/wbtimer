@@ -1,0 +1,18 @@
+<ExInfo>
+	<standardInfo process="EX_GDBS_TBCXSQ"><!--标准特别程序申请数据-->
+		<Field FieldName='SBLSH'>申办流水号</Field>
+		<Field FieldName='SXBM'>事项编码</Field>
+		<Field FieldName='XH'>序号</Field>
+		<Field FieldName='TBCXZL'>特别程序种类</Field>
+		<Field FieldName='TBCXZLMC'>特别程序种类名称</Field>
+		<Field FieldName='TBCXKSRQ'>特别程序开始日期</Field>
+		<Field FieldName='TBCXPZR'>特别程序批准人</Field>
+		<Field FieldName='TBCXQDLY'>特别程序启动理由或依据</Field>
+		<Field FieldName='SQNR'>申请内容</Field>
+		<Field FieldName='TBCXSX'>特别程序时限</Field>
+		<Field FieldName='TBCXSXDW'>特别程序时限单位</Field>
+		<Field FieldName='XZQHDM'>特别程序申请部门所在地行政区划代码</Field>
+		<Field FieldName='BZ'>备注</Field>
+		<Field FieldName='BYZD'>备用字段</Field>
+	</standardInfo>
+</ExInfo>

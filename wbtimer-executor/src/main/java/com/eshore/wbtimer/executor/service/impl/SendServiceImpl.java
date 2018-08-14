@@ -1,0 +1,575 @@
+package com.eshore.wbtimer.executor.service.impl;
+
+import com.eshore.wbtimer.common.utils.SpringContextUtil;
+import com.eshore.wbtimer.core.log.WbtimerJobLogger;
+import com.eshore.wbtimer.executor.common.code.sms.Sms;
+import com.eshore.wbtimer.executor.common.code.sms.SmsTemplate;
+import com.eshore.wbtimer.executor.common.constants.CommConstants;
+import com.eshore.wbtimer.executor.common.constants.EmallConstants;
+import com.eshore.wbtimer.executor.common.utils.DateUtils;
+import com.eshore.wbtimer.executor.mapper.CommonMapper;
+import com.eshore.wbtimer.executor.mapper.SendServiceMapper;
+import com.eshore.wbtimer.executor.mapper.SmsSendQueueMapper;
+import com.eshore.wbtimer.executor.mapper.bean.*;
+import com.eshore.wbtimer.executor.service.CfgContentService;
+import com.eshore.wbtimer.executor.service.SendService;
+import com.eshore.wbtimer.executor.service.SendSmsHandlerService;
+import com.eshore.wbtimer.executor.service.bean.SmsReceiptParamBean;
+import com.eshore.wbtimer.executor.service.bean.SmsSendQueueHistParamBean;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+/**
+ * 描述:发送短信service处理
+ *
+ * @author Yangjinming
+ * @create 2018/1/25 9:19
+ */
+@Service
+public class SendServiceImpl implements SendService {
+    private SmsTemplate smsTemplate;
+    private Sms sms;
+    @Autowired
+    private SendServiceMapper sendServiceMapper;
+    @Autowired
+    private CfgContentService cfgContentService;
+    @Autowired
+    private SmsSendQueueMapper smsSendQueueMapper;
+    @Autowired
+    private CommonMapper commonMapper;
+    private SmsReceiptParamBean smsReceiptParam;
+
+    {
+        smsTemplate = new SmsTemplate();
+        sms = new Sms();
+    }
+
+    /* 申办成功和其他流程短信下行定时不同,所以定义2个task任务 */
+    @Override
+    public void startSbSend() throws Exception {
+        //网上申办短信提醒（1，发送给申请人APPLY_0；2，发送给预受理环节待办人的上级领导ALERT_4）
+        smsSb();
+        //A类特别程序申请， 发送给审批领导,SPECIAL_A_LEADER
+        smsSendLeaderSpecailA();
+
+    }
+
+    @Override
+    public void startSend() throws Exception {
+        // @3 补齐告知到期提醒 ：
+        //发送提醒短信给申请人ALERT_GZ_0，发送给发起补正告知的处理人ALERT_GZ_1
+        smsBqgz();
+        System.out.println("成功1");
+        // @4 办结到期前一天通知当前待办处理人ALERT_1
+        smsSbTimeto(false);
+        System.out.println("成功2");
+        // @5 办结到期当天通知当前待办处理人科室负责人ALERT_2
+        smsSbTimeto(true);
+        System.out.println("成功3");
+        // @6 办结到期超期通知当前待办处理人分管领导ALERT_3
+        smsSbTimeout();
+        System.out.println("成功4");
+        // @7 特别程序到期提醒 发送给特别程序发起人 ALERT_5
+        smsTbcx();
+        System.out.println("成功5");
+    }
+
+    @Override
+    public void sendRemindPreAcceptSMS() throws Exception {
+        List<Map<String, Object>> contents = sendServiceMapper.selectFgSendRemindPreAcceptSMS();
+        if (CollectionUtils.isNotEmpty(contents) && (smsTemplate.get("FG_PREACCEPT_ALERT", "0") != null)) {
+            String smstemplate = smsTemplate.get("FG_PREACCEPT_ALERT", "0").getContent();
+            //如果模板为空，就返回
+            if (smstemplate == null) return;
+            for (Map<String, Object> item : contents) {
+                //如果短信的内容替换字段为空，则返回
+                if ((item.get("SQRMC") == null) || (item.get("SBSJ") == null) || (item.get("SXMC") == null) || (item.get("HJSLBS") == null)) {
+                    WbtimerJobLogger.log("发改提醒部门进行预受理短信的短信参数存在空值");
+                    continue;
+                }
+                String smscontent = smstemplate.replaceFirst("@@SQRMC@@", item.get("SQRMC").toString());
+                smscontent = smscontent.replaceFirst("@@SBSJ@@", item.get("SBSJ").toString());
+                smscontent = smscontent.replaceFirst("@@SXMC@@", item.get("SXMC").toString());
+
+                if (item.get("XMMC") != null) {
+                    smscontent = smscontent.replaceFirst("@@XMMC@@", item.get("XMMC").toString() + "项目的");
+                } else {
+                    smscontent = smscontent.replaceFirst("@@XMMC@@", "");
+                }
+                String mobile = item.get("MOBILE").toString();
+                WbtimerJobLogger.log(mobile + ":");
+                WbtimerJobLogger.log(smscontent);
+                sms.save(mobile, smscontent, Long.parseLong(item.get("HJSLBS").toString()), "PREACCEPT", "FG_PREACCEPT_ALERT");
+            }
+        }
+    }
+
+    @Override
+    public void sendReceiveWaitDealSms() throws Exception {
+        List<Map<String, Object>> contents = sendServiceMapper.receiveWaitDealSmsSendTask();
+        if (contents != null && !contents.isEmpty()) {
+            String smstemplate = smsTemplate.get("RECIVE_WAITDEAL_SMS", "0").getContent();
+            for (Map<String, Object> item : contents) {
+                String smscontent = smstemplate.replaceFirst("@@task_count@@", item.get("TOTAL").toString());
+                String mobile = item.get("MOBILE").toString();
+                sms.save(mobile, smscontent, -1L, "PREACCEPT", "RECIVE_WAITDEAL_SMS");
+            }
+            System.out.println("receive成功");
+        }
+    }
+
+    @Override
+    public void startTszxSms() throws Exception {
+        if (smsReceiptParam == null) {
+            smsReceiptParam = new SmsReceiptParamBean();
+        }
+        // 配置为真实发送时才调用短信网关
+        smsReceiptParam.setIsSuccess(false);
+        String smsMax = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, EmallConstants.CONTENTCODE_SEND_SMS_SMSMAX);
+        String sendHandler = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, EmallConstants.CONTENTCODE_SEND_SMS_SEND_HANDLER);
+        // 对应create_name的集合，逗号隔开，只发送属于该集合内的短信
+        // String createName="verifycode-ZXTS";
+        String createNameList = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "VERTIFY_CODE_LIST");
+        // 转换为数组
+        String createName[] = createNameList.split(",");
+        // 是否真实发送到网关Y(是)，N（否，只从待发送队列清除）
+        String sendCtrl = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "SEND_CTRL");
+        // 是否发送全部：Y：发送全部，其他：按应用模块集合发送
+        String sendAll = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "SEND_ALL");
+        String queueMax = cfgContentService.getCfgContentValue(
+                EmallConstants.TYPECODE_SEND_SMS_SETTING, EmallConstants.CONTENTCODE_SEND_SMS_QUEUEMAX);
+        SendSmsHandlerService sendSmsHandlerService = (SendSmsHandlerService) SpringContextUtil.getBean(sendHandler);
+
+        List<SmsSendQueue> smsSendQueueBeanList = smsSendQueueMapper.findAll(Long.valueOf(queueMax), "CREATE_DATE");
+        for (SmsSendQueue smsSendQueueBean : smsSendQueueBeanList) {
+            if (smsSendQueueBean != null) {
+                if (StringUtils.isEmpty(smsSendQueueBean.getCreateName())) {
+                    // 无归属模块名的不予发送
+                    continue;
+                }
+                if ("Y".equals(sendAll)) {
+                    // Y：发送全部,不做处理
+                } else {
+                    // 其他：按应用模块集合发送，过滤不在集合内的短信
+                    if (!isHave(createName, smsSendQueueBean.getCreateName())) {
+                        continue;
+                    }
+                }
+                long sendTimes = smsSendQueueBean.getSendTimes();
+                if (sendTimes >= Long.valueOf(smsMax)) {
+                    deleteSms(smsSendQueueBean.getQueueId(), smsReceiptParam);
+                    continue;
+                }
+                // 配置为真实发送时才调用短信网关
+                //smsReceiptParam.setIsSuccess(false);
+                //boolean isSuccess = false;
+                if ("Y".equals(sendCtrl)) {
+                    smsReceiptParam = sendSmsHandlerService.send(smsSendQueueBean.getPhonenumber(), smsSendQueueBean.getSmsContent());
+                } else {
+                    // 否则直接置为发送成功，将队列移入发送历史
+                    smsReceiptParam.setIsSuccess(true);
+                    //isSuccess = true;
+                }
+                //if (!isSuccess) {
+                if (!smsReceiptParam.getIsSuccess()) {
+                    smsSendQueueBean.setSendTimes((short)(smsSendQueueBean.getSendTimes() + 1));
+                    smsSendQueueMapper.updateById(smsSendQueueBean);//mp通用mapper切换
+                    if (smsSendQueueBean.getSendTimes() >= Long.valueOf(smsMax)) {
+                        deleteSms(smsSendQueueBean.getQueueId(), smsReceiptParam);
+                        continue;
+                    }
+                } else {
+                    deleteSms(smsSendQueueBean.getQueueId(), smsReceiptParam);
+                }
+                smsReceiptParam.setIsSuccess(false);
+                smsReceiptParam.setSessionId(null);
+                smsReceiptParam.setSmsstat(null);
+                smsReceiptParam.setErrCode(null);
+            }
+        }
+    }
+
+    private boolean deleteSms(Long queueId, SmsReceiptParamBean smsReceiptParam) {
+        boolean isSuccess = false;
+        try {
+            SmsSendQueue smsSendQueueBean = smsSendQueueMapper.selectById(queueId);//mp通用mapper切换
+            if (smsSendQueueBean != null) {
+                smsSendQueueMapper.deleteById(queueId);//mp通用mapper切换
+                SmsSendQueueHistParamBean smsSendQueueHistParam = new SmsSendQueueHistParamBean();
+                PropertyUtils.copyProperties(smsSendQueueHistParam, smsSendQueueBean);
+                if (smsReceiptParam.getIsSuccess()) {
+                    smsSendQueueHistParam.setSendFlag("1");
+                } else {
+                    smsSendQueueHistParam.setSendFlag("0");
+                }
+                smsSendQueueHistParam.setSessionId(smsReceiptParam.getSessionId());  //短信sessionid
+                smsSendQueueHistParam.setHistId(commonMapper.selectSeqId("SEQ_SMS_SEND_QUEUE_HIST"));
+                smsSendQueueHistParam.setSendDate(new Date());
+                smsSendQueueMapper.addSmsSendQueueHist(smsSendQueueHistParam);
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e.getMessage(), e);
+            isSuccess = false;
+        }
+        return isSuccess;
+    }
+
+    private boolean isHave(String[] strs, String s) {
+        /*
+         * 此方法有两个参数，第一个是要查找的字符串数组，第二个是要查找的字符或字符串
+         */
+        for (int i = 0; i < strs.length; i++) {
+            if (strs[i].equals(s)) {// 循环查找字符串数组中的每个字符串中是否等于查找的内容
+                return true;// 查找到了就返回真，不在继续查询
+            }
+        }
+        return false;// 没找到返回false
+    }
+
+    /**
+     * 申办成功
+     *
+     * @throws Exception
+     */
+    private void smsSb() throws Exception {
+        List<WsbsSbBean> list = sendServiceMapper.selectWsbsSbSmsNoticeSbSuccess(CommConstants.SMS_SEND_TYPE.APPLY_0);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Object object : list) {
+                WsbsSbBean result = (WsbsSbBean) object;
+                String orgCode = result.getZzjgdm();
+                // 1直接给申请联系人发短信
+                MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.APPLY_0, orgCode);
+                String smscontent = "";
+                if (messageTemplate != null) {
+                    smscontent = smsTemplate.filter(messageTemplate, result);
+                    if (result.getLxrsj() != null && !result.getLxrsj().equals("")) {
+                        if (!StringUtils.isEmpty(result.getLxrsj())) {
+                            if (sms.check(result.getLxrsj(), CommConstants.SMS_SEND_TYPE.APPLY_0, result.getHjslbs())) {
+                                sms.save(result.getLxrsj(), smscontent, result.getHjslbs(), CommConstants.SUB_STEP_TYPE.APPLY, CommConstants.SMS_SEND_TYPE.APPLY_0);
+                            }
+                        }
+                    }
+                }
+                // 2发送给部门配置的短信提醒接收人
+                List<String> telephones = new ArrayList<String>();
+                // 取出下行短信模板内容
+                messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_4, orgCode);
+                if (messageTemplate != null) {
+                    // 从配置表取接收人列表
+                    if (messageTemplate.getMsgConfId() != null) {
+                        List<String> mobileList = sendServiceMapper.getMobileFromOrgMsg(messageTemplate.getMsgConfId());
+                        if (CollectionUtils.isNotEmpty(mobileList)) {
+                            telephones.addAll(CollectionUtils.subtract(mobileList, telephones));
+                        }
+                    }
+                    if (CollectionUtils.isNotEmpty(telephones)) {
+                        smscontent = smsTemplate.filter(messageTemplate, result);
+                        for (int i = 0; i < telephones.size(); i++) {
+                            if (StringUtils.isNotEmpty(telephones.get(i))) {
+                                if (sms.check(telephones.get(i), CommConstants.SMS_SEND_TYPE.ALERT_4, result.getHjslbs())) {
+                                    sms.save(telephones.get(i), smscontent, result.getHjslbs(), CommConstants.SUB_STEP_TYPE.APPLY, CommConstants.SMS_SEND_TYPE.ALERT_4);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * A类特别程序 发送给领导
+     *
+     * @throws Exception
+     * @ wangfu 2014-10-16
+     */
+    private void smsSendLeaderSpecailA() throws Exception {
+        List<WsbsTbcxsqBean> list = sendServiceMapper.getWsbsTbcxsqSpecailALeader();
+        Map<String, Object> params = null;
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 存在符合条件的specailA的记录
+            for (WsbsTbcxsqBean result : list) {
+                // @1 取出待下发号码列表
+                params = new HashMap<>();
+                params.put("sblsh", result.getSblsh());
+                long hjslbs = result.getHjslbs();
+                List<String> telephones = sendServiceMapper.getSpecailALeaderTelephone(hjslbs);
+                WsbsSbBean sbInfo = sendServiceMapper.getWsbsSbInfo(params);
+                String orgCode = sbInfo.getZzjgdm();
+                // @2 取出下行短信模板内容
+                MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.SPECIAL_A_LEADER, orgCode);
+                if (messageTemplate != null) {
+                    String smsContent = smsTemplate.filter(messageTemplate, sbInfo);
+                    // 特别申请理由
+                    if (smsContent.contains("@@specialApplyContent@@")) {
+                        smsContent = smsContent.replace("@@specialApplyContent@@", result.getTbcxqdly());
+                    }
+                    // 咨询电话
+                    if (smsContent.contains("@@linkPhone@@") || smsContent.contains("@@staffName@@")) {
+                        String clrgh = result.getClrgh();
+                        if (StringUtils.isNotEmpty(clrgh)) {
+                            SysstaffBean sysStaffBean = sendServiceMapper.getSysStaffById(clrgh);
+                            smsContent = smsContent.replace("@@linkPhone@@", sysStaffBean.getLinkPhone());
+                            smsContent = smsContent.replace("@@staffName@@", sysStaffBean.getStaffName());
+                        }
+                    }
+                    sendService(hjslbs, CommConstants.SMS_SEND_TYPE.SPECIAL_A_LEADER, CommConstants.SUB_STEP_TYPE.SPECIAL_APPLY, telephones, smsContent);
+                }
+            }
+        }
+    }
+
+    private void sendService(Long hjslbs, String templateCode, String sbStepType, List<String> telephones, String smsContent)
+            throws Exception {
+        if (CollectionUtils.isNotEmpty(telephones)) {
+            for (int i = 0; i < telephones.size(); i++) {
+                if (StringUtils.isNotEmpty(telephones.get(i))) {
+                    if (sms.check(telephones.get(i), templateCode, hjslbs)) {
+                        sms.save(telephones.get(i), smsContent, hjslbs, sbStepType, templateCode);
+                    }
+                }
+            }
+        }
+    }
+
+    private void smsBqgz() throws Exception {
+        String warnDay = cfgContentService.getCfgContent("SP_SETTING", "DEFAULT_ALERT").getContentvalue();
+        List<WsbsBzgzBean> list = sendServiceMapper.getSmsNoticeBzgz(warnDay);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (WsbsBzgzBean result : list) {
+                String sblsh = result.getSblsh();
+                List<String> telephones = new ArrayList<>();
+                String sbxmmc = "";
+                Map<String, Object> sbParam = new HashMap<>();
+                sbParam.put("sblsh", sblsh);
+                sbParam.put("sxbm", result.getSxbm());
+                WsbsSbBean sbData = sendServiceMapper.getWsbsSbInfo(sbParam);
+                String orgCode = "";
+                if (sbData != null) {
+                    objFuncsPut(telephones, sbData.getLxrsj());
+                    orgCode = sbData.getZzjgdm();
+                }
+                /*1，发给申请人 补正告知处下发号码来自申办表的联系人手机 */
+                //  取出下行短信模板内容
+                MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_GZ_0, orgCode);
+                if (messageTemplate != null) {
+                    String smsContent = smsTemplate.filter(messageTemplate, sbData);
+                    // 补正告知到期日期
+                    if (smsContent.contains("@@buzgzDate@@")) {
+                        smsContent = smsContent.replace("@@buzgzDate@@", DateUtils.formatDate(result.getEndDate(), "yyyy年MM月dd日"));
+                    }
+                    // 咨询电话
+                    if (smsContent.contains("@@linkPhone@@")) {
+                        String clrgh = result.getClrgh();
+                        if (StringUtils.isNotEmpty(clrgh)) {
+                            SysstaffBean sysStaffBean = sendServiceMapper.getSysStaffById(clrgh);
+                            smsContent = smsContent.replace("@@linkPhone@@", sysStaffBean.getLinkPhone());
+                        }
+                    }
+                    sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_GZ_0, CommConstants.SUB_STEP_TYPE.SUPPLEMENT_GZ, telephones, smsContent);
+                }
+                /*2，发给发起补正告知的处理人 */
+                //  取出下行短信模板内容
+                MessageTemplate messageTemplate2 = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_GZ_1, orgCode);
+                if (messageTemplate2 != null) {
+                    String smsContent = smsTemplate.filter(messageTemplate2, sbData);
+                    // 补正告知到期日期
+                    if (smsContent.contains("@@buzgzDate@@")) {
+                        smsContent = smsContent.replace("@@buzgzDate@@", DateUtils.formatDate(result.getEndDate(), "yyyy年MM月dd日"));
+                    }
+                    telephones = new ArrayList<>();
+                    objFuncsPut(telephones, result.getMobile());
+                    sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_GZ_1, CommConstants.SUB_STEP_TYPE.SUPPLEMENT_GZ, telephones, smsContent);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param leader true 办结到期当天通知当前待办处理人科室负责人 false 办结到期前一天通知当前待办处理人
+     * @throws Exception
+     */
+    private void smsSbTimeto(boolean leader) throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        //取剩余天数
+        if (leader) {
+            param.put("restDay", 0L);
+        } else {
+            param.put("restDay", 1l);
+        }
+        List<WsbsSbBean> wsbsSbBeanList = sendServiceMapper.getSmsNoticeSb(param);
+        if (CollectionUtils.isNotEmpty(wsbsSbBeanList)) {
+            for (WsbsSbBean result : wsbsSbBeanList) {
+                String sblsh = result.getSblsh();
+                String orgCode = result.getZzjgdm();
+                if (leader) {
+                    List<String> telephones = getTelephone(sblsh, "parent");
+                    // @2 取出下行短信模板内容
+                    MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_2, orgCode);
+
+                    if (messageTemplate != null) {
+                        String smsContent = smsTemplate.filter(messageTemplate, result);
+                        sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_2, CommConstants.SUB_STEP_TYPE.APPLY, telephones, smsContent);
+                    }
+                } else {
+                    List<String> telephones = getTelephone(sblsh, null);
+                    // @2 取出下行短信模板内容
+                    MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_1, orgCode);
+                    if (messageTemplate != null) {
+                        String smsContent = smsTemplate.filter(messageTemplate, result);
+                        sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_1, CommConstants.SUB_STEP_TYPE.APPLY, telephones, smsContent);
+
+                    }
+                }
+            }
+        }
+    }
+
+    private void smsSbTimeout() throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        //取预警状态为超时的数据
+        param.put("alertStatus", "2");
+        List<WsbsSbBean> list = sendServiceMapper.getSmsNoticeSb(param);
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 存在超时申办数据时
+            for (WsbsSbBean result : list) {
+                // @1 取出待下发号码列表
+                String sblsh = result.getSblsh();
+                String orgCode = result.getZzjgdm();
+
+                List<String> telephones = getTelephone(sblsh, "parent.parent");
+                // @2 取出下行短信模板内容
+                MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_3, orgCode);
+                if (messageTemplate != null) {
+                    String smsContent = smsTemplate.filter(messageTemplate, result);
+                    sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_3, CommConstants.SUB_STEP_TYPE.APPLY, telephones, smsContent);
+                }
+            }
+        }
+    }
+
+    /**
+     * 特别程序到期提醒
+     *
+     * @throws Exception
+     */
+    private void smsTbcx() throws Exception {
+        List<WsbsTbcxsqBean> list = sendServiceMapper.getSmsNoticeTbcx();
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 存在有预警数据时
+            for (Object object : list) {
+                WsbsTbcxsqBean result = (WsbsTbcxsqBean) object;
+                // @1 取出待下发号码列表
+                String sblsh = result.getSblsh();
+                List<String> telephones = getTelephone(sblsh, null);
+                Map<String, Object> param = new HashMap<>();
+                param.put("sblsh", sblsh);
+                WsbsSbBean sbInfo = sendServiceMapper.getWsbsSbInfo(param);
+                String orgCode = sbInfo.getZzjgdm();
+                // @2 取出下行短信模板内容
+                MessageTemplate messageTemplate = smsTemplate.get(CommConstants.SMS_SEND_TYPE.ALERT_5, orgCode);
+                if (messageTemplate != null) {
+                    String smsContent = smsTemplate.filter(messageTemplate, sbInfo);
+                    sendService(result.getHjslbs(), CommConstants.SMS_SEND_TYPE.ALERT_5, CommConstants.SUB_STEP_TYPE.SPECIAL_APPLY, telephones, smsContent);
+                }
+            }
+        }
+    }
+
+    private void objFuncsPut(List<String> target, String string) {
+        if (!target.contains(string) && string != null) {
+            target.add(string);
+        }
+    }
+
+    /**
+     * @param sblsh
+     * @param parent 读取科室负责人或者分管领导号码 parent=parent 科室负责人 parent=parent.parent 分管领导
+     * @return
+     * @throws Exception
+     */
+    private List<String> getTelephone(String sblsh, String parent) throws Exception {
+        List<String> telephones = new ArrayList<>();
+        WsbsSbActorBean param = new WsbsSbActorBean();
+        param.setSblsh(sblsh);
+        // 查询该事项的当前环节参与者
+        List<WsbsSbActorBean> list = sendServiceMapper.getSmsNoticeActor(sblsh);
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 判断是否有具体工号在处理
+            boolean isStaff = false;
+            for (Object object : list) {
+                WsbsSbActorBean actor = (WsbsSbActorBean) object;
+                String participanttype = actor.getParticipanttype();
+                if (participanttype.equals("emp")) {
+                    isStaff = true;
+                    break;
+                }
+            }
+            for (WsbsSbActorBean actor : list) {
+                String participantid = actor.getParticipantid();
+                String participanttype = actor.getParticipanttype();
+                List<SysstaffBean> staff = null;
+                if (isStaff) {
+                    if (participanttype.equals("emp")) {
+                        // 如果有员工在领取,只取当前处理工号
+                        staff = sendServiceMapper.getSysStaffActorForemp(Long.valueOf(participantid));
+                        //如果当前参与者是sysadmin，则将sysadmin替换为事项主管部门的虚拟账号
+                        if (CollectionUtils.isNotEmpty(staff)) {
+                            for (int i = 0; i < staff.size(); i++) {
+                                if ("sysadmin".equals(staff.get(i).getStaffId())) {
+                                    SysstaffBean virtualStaff = sendServiceMapper.getSysStaffActorForemp2(sblsh);
+                                    if (virtualStaff != null) {
+                                        staff.set(i, virtualStaff);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // 取岗位下的所有工号
+                    if (participanttype.equals("position")) {
+                        staff = sendServiceMapper.getSysStaffActorForposition(Long.valueOf(participantid));
+                    }
+                }
+                if (CollectionUtils.isNotEmpty(staff)) {
+                    for (Object staffObj : staff) {
+                        SysstaffBean staffData = (SysstaffBean) staffObj;
+                        if (parent != null) {
+                            if (parent.equals("parent")) {
+                                if (StringUtils.isNotEmpty(staffData.getLeader())) {
+                                    SysstaffBean parentStaff = sendServiceMapper.getSysStaffById(staffData.getLeader());
+                                    if (parentStaff != null && parentStaff.getMobile() != null) {
+                                        objFuncsPut(telephones, parentStaff.getMobile());
+                                    }
+                                }
+
+                            } else if (parent.equals("parent.parent")) {
+                                if (StringUtils.isNotEmpty(staffData.getLeader())) {
+                                    SysstaffBean parentStaff = sendServiceMapper.getSysStaffById(staffData.getLeader());
+                                    if (parentStaff != null && parentStaff.getLeader() != null) {
+                                        if (StringUtils.isNotEmpty(parentStaff.getLeader())) {
+                                            SysstaffBean parentPreStaff = sendServiceMapper.getSysStaffById(parentStaff.getLeader());
+                                            if (parentPreStaff != null && parentPreStaff.getMobile() != null) {
+                                                objFuncsPut(telephones, parentPreStaff.getMobile());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            objFuncsPut(telephones, staffData.getMobile());
+                        }
+                    }
+                }
+            }
+        }
+        return telephones;
+    }
+
+}

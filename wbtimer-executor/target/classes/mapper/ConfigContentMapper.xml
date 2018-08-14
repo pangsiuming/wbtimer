@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.ConfigContentMapper" >
+    <select id="selectByTypeCode" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.ConfigContentBean">
+        SELECT  A.*
+	   FROM FRAME_TB_CONFIG_CONTENT A, FRAME_TB_CONFIG_TYPE B
+	   where A.TYPEID = B.TYPEID
+	     AND B.TYPECODE = #{typecode,jdbcType=VARCHAR}
+    </select>
+    <select id="selectItemInformation"
+            resultType="com.eshore.wbtimer.executor.service.bean.SendItemInformationParam">
+         select organ.org_name as bmmc,sb.sblsh as sblsh,
+         sb.sxbm as sxbm,sb.sxmc as sxmc,
+         sb.sqrmc as sqrmc,sb.lxrxm as lxrmc,
+         sb.lxrsj as lxrsj,
+         sms.sms_content as content,
+         mission.handle_state  as hjzt,
+         mission.handle_date as hjsj,
+         mission.activityid as hjmc
+         from  TB_SM_ORGAN organ,wsbs_sb sb,sms_send_queue sms,
+               mission_message message,service_conf_mission mission
+         where organ.org_code=sb.zzjgdm and
+            sb.sblsh=mission.mission_obj_id and
+            mission.mission_id=message.mission_id and
+            message.message_id=sms.queue_id and
+           sms.queue_id = #{queueId}
+    </select>
+
+
+</mapper>

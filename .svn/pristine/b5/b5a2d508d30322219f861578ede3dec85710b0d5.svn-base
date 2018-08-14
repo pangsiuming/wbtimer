@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WsbsTbcxspBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxspBean" >
+    <constructor >
+      <arg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGMS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATE_TIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="CLRGH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXBM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBXMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="NEEDSENDMSG" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SMSCONTENT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXQDLY" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQNR" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TBCXSX" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="TBCXSXDW" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+
+  <select id="selectNotPassList" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxspBean" resultMap="BaseResultMap">
+     SELECT *
+     FROM WSBS_TBCXSP T
+     WHERE T.CLJGDM = #{cljgdm,jdbcType=VARCHAR}
+     AND NOT EXISTS
+    (SELECT SBLSH FROM WSBS_TBCXJG WHERE PROCESSINSTID = T.PROCESSINSTID)
+  </select>
+
+  <insert id="insert" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxspBean" >
+    insert into WSBS_TBCXSP (HJSLBS, SBLSH, CLJGDM, 
+      CLJGMS, CREATE_TIME, PROCESSINSTID, 
+      CLRGH, CLRXM, SXBM, 
+      SBXMMC, NEEDSENDMSG, SMSCONTENT, 
+      TBCXQDLY, SQNR, TBCXSX, 
+      TBCXSXDW)
+    values (#{hjslbs,jdbcType=DECIMAL}, #{sblsh,jdbcType=VARCHAR}, #{cljgdm,jdbcType=VARCHAR}, 
+      #{cljgms,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{processinstid,jdbcType=DECIMAL}, 
+      #{clrgh,jdbcType=VARCHAR}, #{clrxm,jdbcType=VARCHAR}, #{sxbm,jdbcType=VARCHAR}, 
+      #{sbxmmc,jdbcType=VARCHAR}, #{needsendmsg,jdbcType=VARCHAR}, #{smscontent,jdbcType=VARCHAR}, 
+      #{tbcxqdly,jdbcType=VARCHAR}, #{sqnr,jdbcType=VARCHAR}, #{tbcxsx,jdbcType=DECIMAL}, 
+      #{tbcxsxdw,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxspBean" >
+    insert into WSBS_TBCXSP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        HJSLBS,
+      </if>
+      <if test="sblsh != null" >
+        SBLSH,
+      </if>
+      <if test="cljgdm != null" >
+        CLJGDM,
+      </if>
+      <if test="cljgms != null" >
+        CLJGMS,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID,
+      </if>
+      <if test="clrgh != null" >
+        CLRGH,
+      </if>
+      <if test="clrxm != null" >
+        CLRXM,
+      </if>
+      <if test="sxbm != null" >
+        SXBM,
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC,
+      </if>
+      <if test="needsendmsg != null" >
+        NEEDSENDMSG,
+      </if>
+      <if test="smscontent != null" >
+        SMSCONTENT,
+      </if>
+      <if test="tbcxqdly != null" >
+        TBCXQDLY,
+      </if>
+      <if test="sqnr != null" >
+        SQNR,
+      </if>
+      <if test="tbcxsx != null" >
+        TBCXSX,
+      </if>
+      <if test="tbcxsxdw != null" >
+        TBCXSXDW,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        #{hjslbs,jdbcType=DECIMAL},
+      </if>
+      <if test="sblsh != null" >
+        #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgdm != null" >
+        #{cljgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgms != null" >
+        #{cljgms,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="processinstid != null" >
+        #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="needsendmsg != null" >
+        #{needsendmsg,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxqdly != null" >
+        #{tbcxqdly,jdbcType=VARCHAR},
+      </if>
+      <if test="sqnr != null" >
+        #{sqnr,jdbcType=VARCHAR},
+      </if>
+      <if test="tbcxsx != null" >
+        #{tbcxsx,jdbcType=DECIMAL},
+      </if>
+      <if test="tbcxsxdw != null" >
+        #{tbcxsxdw,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eshore.wbtimer.executor.mapper.CLYJMapper">
+    <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.PackageInoutProcess" >
+        <constructor >
+            <idArg column="PACKAGE_PROCESS_ID" jdbcType="DECIMAL" javaType="java.lang.Long" />
+            <arg column="PACKAGEID" jdbcType="DECIMAL" javaType="java.lang.Long" />
+            <arg column="IN_DATE" jdbcType="DATE" javaType="java.util.Date" />
+            <arg column="IN_REMARK" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_WORKPOST" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_WORKPOSTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_STAFFID" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_STAFFNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_ORGCODE" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="FROM_ORGNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_WORKPOST" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_WORKPOSTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_ORGCODE" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_ORGNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_STAFFID" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="TO_STAFFNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="OUT_DATE" jdbcType="DATE" javaType="java.util.Date" />
+            <arg column="OUT_REMARK" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="STATUS" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="REMARK" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="ALERT_STATUS" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="REST_TIME" jdbcType="DECIMAL" javaType="java.lang.Long" />
+        </constructor>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        PACKAGE_PROCESS_ID, PACKAGEID, IN_DATE, IN_REMARK, FROM_WORKPOST, FROM_WORKPOSTNAME, FROM_STAFFID,
+        FROM_STAFFNAME,FROM_ORGCODE,FROM_ORGNAME,TO_WORKPOST,TO_WORKPOSTNAME,TO_ORGCODE,TO_ORGNAME,TO_STAFFID,
+        TO_STAFFNAME,OUT_DATE,OUT_REMARK,STATUS,REMARK,ALERT_STATUS,REST_TIME
+    </sql>
+
+    <select id="queryPackageInout" parameterType="java.util.Map" resultMap="BaseResultMap" >
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+           PACKAGE_INOUT_PROCESS A
+        <where> 1=1
+            <if test="packageProcessId != null">
+                An PACKAGE_PROCESS_ID = #{packageProcessId,jdbcType=NUMERIC}
+            </if>
+            <if test="packageid != null">
+                AND  PACKAGEID = #{packageid,jdbcType=NUMERIC}
+            </if>
+            <if test="inDate != null">
+                AND  <![CDATA[IN_DATE&gt;=trunc(cast(#{inDate,jdbcType=TIMESTAMP} as date),'DD')
+                     AND IN_DATE&lt;trunc(cast(#{inDate,jdbcType=TIMESTAMP} as date)+1,'DD')]]>
+            </if>
+            <if test="inDateRange1 != null">
+                AND <![CDATA[  IN_DATE&gt;=to_date(#{inDateRange1,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')  ]]>
+            </if>
+            <if test="inDateRange2 != null">
+                AND  <![CDATA[ IN_DATE&lt;=to_date(#{inDateRange2,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')]]>
+            </if>
+            <if test="inRemark != null">
+                AND  IN_REMARK = #{inRemark,jdbcType=VARCHAR}
+            </if>
+            <if test="inRemarkLikeRange != null">
+                AND  IN_REMARK LIKE #{inRemarkLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromWorkpost != null">
+                AND  FROM_WORKPOST = #{fromWorkpost,jdbcType=VARCHAR}
+            </if>
+            <if test="fromWorkpostLikeRange != null">
+                AND  FROM_WORKPOST LIKE #{fromWorkpostLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromWorkpostname != null">
+                AND  FROM_WORKPOSTNAME = #{fromWorkpostname,jdbcType=VARCHAR}
+            </if>
+            <if test="fromWorkpostnameLikeRange != null">
+                AND  FROM_WORKPOSTNAME LIKE #{fromWorkpostnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromStaffid != null">
+                AND  FROM_STAFFID = #{fromStaffid,jdbcType=VARCHAR}
+            </if>
+            <if test="fromStaffidLikeRange != null">
+                AND  FROM_STAFFID LIKE #{fromStaffidLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromStaffname != null">
+                AND   FROM_STAFFNAME = #{fromStaffname,jdbcType=VARCHAR}
+            </if>
+            <if test="fromStaffnameLikeRange != null">
+                AND  FROM_STAFFNAME LIKE #{fromStaffnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromOrgcode != null">
+                AND  FROM_ORGCODE = #{fromOrgcode,jdbcType=VARCHAR}
+            </if>
+            <if test="fromOrgcodeLikeRange != null">
+                AND  FROM_ORGCODE LIKE #{fromOrgcodeLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="fromOrgname != null">
+                AND  FROM_ORGNAME = #{fromOrgname,jdbcType=VARCHAR}
+            </if>
+            <if test="fromOrgnameLikeRange != null">
+                AND  FROM_ORGNAME LIKE #{fromOrgnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toWorkpost != null">
+                AND  TO_WORKPOST = #{toWorkpost,jdbcType=VARCHAR}
+            </if>
+            <if test="toWorkpostLikeRange != null">
+                AND   TO_WORKPOST LIKE #{toWorkpostLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toWorkpostname != null">
+                AND  TO_WORKPOSTNAME = #{toWorkpostname,jdbcType=VARCHAR}
+            </if>
+            <if test="toWorkpostnameLikeRange != null">
+                AND  TO_WORKPOSTNAME LIKE #{toWorkpostnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toOrgcode != null">
+                AND  TO_ORGCODE = #{toOrgcode,jdbcType=VARCHAR}
+            </if>
+            <if test="toOrgcodeLikeRange != null">
+                AND  TO_ORGCODE LIKE #{toOrgcodeLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toOrgname != null">
+                AND  TO_ORGNAME = #{toOrgname,jdbcType=VARCHAR}
+            </if>
+            <if test="toOrgnameLikeRange != null">
+                AND  TO_ORGNAME LIKE #{toOrgnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toStaffid != null">
+                AND  TO_STAFFID = #{toStaffid,jdbcType=VARCHAR}
+            </if>
+            <if test="toStaffidLikeRange != null">
+                AND  TO_STAFFID LIKE #{toStaffidLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="toStaffname != null">
+                AND   TO_STAFFNAME = #{toStaffname,jdbcType=VARCHAR}
+            </if>
+            <if test="toStaffnameLikeRange != null">
+                AND  TO_STAFFNAME LIKE #{toStaffnameLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="outDate != null">
+                AND <![CDATA[ OUT_DATE&gt;=trunc(cast(#{outDate,jdbcType=TIMESTAMP} as date),'DD')
+                    AND OUT_DATE&lt;trunc(cast(#{outDate,jdbcType=TIMESTAMP} as date)+1,'DD')]]>
+            </if>
+            <if test="outDateRange1 != null">
+                AND  <![CDATA[ OUT_DATE&gt;=to_date(#{outDateRange1,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')  ]]>
+            </if>
+            <if test="outDateRange2 != null">
+                AND  <![CDATA[ OUT_DATE&lt;=to_date(#{outDateRange2,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss') ]]>
+            </if>
+            <if test="outRemark != null">
+                AND  OUT_REMARK = #{outRemark,jdbcType=VARCHAR}
+            </if>
+            <if test="outRemarkLikeRange != null">
+                AND  OUT_REMARK LIKE #{outRemarkLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                AND  STATUS = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="statusLikeRange != null">
+                AND   STATUS LIKE #{statusLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null">
+                AND  REMARK = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="remarkLikeRange != null">
+              AND  REMARK LIKE #{remarkLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="alertStatus != null">
+              AND ALERT_STATUS = #{alertStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="alertStatusLikeRange != null">
+              AND ALERT_STATUS LIKE #{alertStatusLikeRange,jdbcType=VARCHAR}
+            </if>
+            <if test="restTime != null">
+              AND  REST_TIME = #{restTime,jdbcType=NUMERIC}
+            </if>
+            <if test="rownum != null">
+              AND <![CDATA[  ROWNUM &lt;= #{rownum} ]]>
+            </if>
+            <if test="extraCondition != null">
+                AND ${extraCondition}
+            </if>
+        </where>
+        <if test="extraOrderColumns != null">
+            ORDER BY ${extraOrderColumns}
+        </if>
+    </select>
+
+    <select id="getAlertDateByWork" resultType="java.util.HashMap" parameterType="java.util.Map">
+            select
+              to_char(ALERT_DATE) as ALERT_DATE
+            from
+              packageInfo_ALERT tt
+            where
+              tt.FROM_WORKPOST= #{fromWork,jdbcType=VARCHAR}
+            and
+              tt.TO_WORKPOST=#{toWork,jdbcType=VARCHAR}
+            <if test='fromWork == "ZHJB_ZHSL"||toWork == "ZHJB_LZG"'>
+                and tt.ALERT_SERVICETYPE='网厅事项'
+            </if>
+
+    </select>
+
+
+
+</mapper>

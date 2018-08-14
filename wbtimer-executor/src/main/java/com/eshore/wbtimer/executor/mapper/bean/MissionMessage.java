@@ -1,0 +1,116 @@
+package com.eshore.wbtimer.executor.mapper.bean;
+
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+
+import java.util.Date;
+
+@TableName("MISSION_MESSAGE")
+public class MissionMessage {
+    @TableId(value = "MESSAGE_ID")
+    private Long messageId;
+
+    private String messageType;
+
+    private String phonenumber;
+
+    private String smsContent;
+
+    private String createName;
+
+    private Date createDate;
+
+    private Long missionId;
+
+    private String sbStepType;
+
+    private Integer sendTimes;
+
+    public MissionMessage(Long messageId, String messageType, String phonenumber, String smsContent, String createName, Date createDate, Long missionId, String sbStepType, Integer sendTimes) {
+        this.messageId = messageId;
+        this.messageType = messageType;
+        this.phonenumber = phonenumber;
+        this.smsContent = smsContent;
+        this.createName = createName;
+        this.createDate = createDate;
+        this.missionId = missionId;
+        this.sbStepType = sbStepType;
+        this.sendTimes = sendTimes;
+    }
+
+    public MissionMessage() {
+        super();
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType == null ? null : messageType.trim();
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber == null ? null : phonenumber.trim();
+    }
+
+    public String getSmsContent() {
+        return smsContent;
+    }
+
+    public void setSmsContent(String smsContent) {
+        this.smsContent = smsContent == null ? null : smsContent.trim();
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Long getMissionId() {
+        return missionId;
+    }
+
+    public void setMissionId(Long missionId) {
+        this.missionId = missionId;
+    }
+
+    public String getSbStepType() {
+        return sbStepType;
+    }
+
+    public void setSbStepType(String sbStepType) {
+        this.sbStepType = sbStepType == null ? null : sbStepType.trim();
+    }
+
+    public Integer getSendTimes() {
+        return sendTimes;
+    }
+
+    public void setSendTimes(Integer sendTimes) {
+        this.sendTimes = sendTimes;
+    }
+}

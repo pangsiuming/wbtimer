@@ -1,0 +1,172 @@
+package com.eshore.wbtimer.executor.service.impl;
+
+import com.eshore.wbtimer.common.utils.SpringContextUtil;
+import com.eshore.wbtimer.common.utils.StringUtil;
+import com.eshore.wbtimer.core.log.WbtimerJobLogger;
+import com.eshore.wbtimer.executor.common.constants.EmallConstants;
+import com.eshore.wbtimer.executor.mapper.SmsSendQueueMapper;
+import com.eshore.wbtimer.executor.mapper.bean.SmsSendQueue;
+import com.eshore.wbtimer.executor.service.CfgContentService;
+import com.eshore.wbtimer.executor.service.SendSmsHandlerService;
+import com.eshore.wbtimer.executor.service.SendSmsQueueService;
+import com.eshore.wbtimer.executor.service.bean.SmsReceiptParamBean;
+import com.eshore.wbtimer.executor.service.bean.SmsSendQueueHistParamBean;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * 描述:短信队列发送到短信平台
+ *
+ * @author Yjm
+ * @create 2018/5/24 9:58
+ */
+@Service
+public class SendSmsQueueServiceImpl implements SendSmsQueueService {
+    @Autowired
+    CfgContentService cfgContentService;
+    @Autowired
+    SmsSendQueueMapper smsSendQueueMapper;
+    private SmsReceiptParamBean smsReceiptParam;
+    @Override
+    public void startSend() throws Exception{
+        if(smsReceiptParam==null){
+            smsReceiptParam = new SmsReceiptParamBean();
+        }
+        smsReceiptParam.setIsSuccess(false);
+        // 配置为真实发送时才调用短信网关
+        String smsMax = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING,
+                EmallConstants.CONTENTCODE_SEND_SMS_SMSMAX);
+        String sendHandler = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING,
+                EmallConstants.CONTENTCODE_SEND_SMS_SEND_HANDLER);
+        // 对应create_name的集合，逗号隔开，只发送属于该集合内的短信
+        String createNameList =cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "CREATE_NAME_LIST");
+        // 转换为数组
+        String createName[] = createNameList.split(",");
+        // 是否真实发送到网关Y(是)，N（否，只从待发送队列清除）
+        String sendCtrl = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "SEND_CTRL");
+        // 是否发送全部：Y：发送全部，其他：按应用模块集合发送
+        String sendAll = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "SEND_ALL");
+
+        SendSmsHandlerService sendSmsHandlerService = (SendSmsHandlerService) SpringContextUtil.getBean(sendHandler);
+
+        List<SmsSendQueue> smsSendQueueBeanList = smsSendQueueMapper.findAll(null,null);
+
+        for (SmsSendQueue smsSendQueueBean : smsSendQueueBeanList) {
+            if (smsSendQueueBean != null) {
+                if (StringUtil.isEmpty(smsSendQueueBean.getCreateName())) {
+                    // 无归属模块名的不予发送
+                    continue;
+                }
+
+                if ("Y".equals(sendAll)) {
+                    // Y：发送全部,不做处理
+                } else {
+                    // 其他：按应用模块集合发送，过滤不在集合内的短信
+                    if (!isHave(createName, smsSendQueueBean.getCreateName())) {
+                        continue;
+                    }
+                }
+
+                long sendTimes = smsSendQueueBean.getSendTimes();
+                if (sendTimes >= Long.valueOf(smsMax)) {
+                    deleteSms(smsSendQueueBean.getQueueId(),smsReceiptParam);
+                    continue;
+                }
+                // 配置为真实发送时才调用短信网关
+                //smsReceiptParam.setIsSuccess(false);
+                //boolean isSuccess = false;
+                if ("Y".equals(sendCtrl)) {
+                    //获取评议短信py_create_name的模块集合，逗号隔开，只发送属于该集合内的评议短信
+                    String pyCreateNameList = cfgContentService.getCfgContentValue(EmallConstants.TYPECODE_SEND_SMS_SETTING, "PY_CREATE_NAME_lIST");
+                    // 转换为数组
+                    String pyCreateName[] = pyCreateNameList.split(",");
+                    //Arrays.asList(pyCreateName).contains(smsSendQueueBean.getCreateName())
+                    if(isHave(pyCreateName, smsSendQueueBean.getCreateName()))
+                    {
+                        //"评议短信" 具体处理部分
+                        //String queueid = ""+smsSendQueueBean.getQueueId();
+                        //smsReceiptParam = sendSmsHandlerService.pySend(queueid);
+                        smsReceiptParam = sendSmsHandlerService.send(smsSendQueueBean.getPhonenumber(), smsSendQueueBean.getSmsContent());
+                    }else{
+                        smsReceiptParam = sendSmsHandlerService.send(smsSendQueueBean.getPhonenumber(), smsSendQueueBean.getSmsContent());
+                    }
+                } else {
+                    // 否则直接置为发送成功，将队列移入发送历史
+                    smsReceiptParam.setIsSuccess(true);
+                    //isSuccess = true;
+                }
+                //if (!isSuccess) {
+                if (!smsReceiptParam.getIsSuccess()) {
+                    SmsSendQueue smsSendQueueParam = new SmsSendQueue();
+                    PropertyUtils.copyProperties(smsSendQueueParam, smsSendQueueBean);
+                    smsSendQueueParam.setSendTimes((short)(smsSendQueueParam.getSendTimes() + 1));
+                    updateSms(smsSendQueueParam);
+                    if (smsSendQueueParam.getSendTimes() >= Long.valueOf(smsMax)) {
+                        deleteSms(smsSendQueueBean.getQueueId(), smsReceiptParam);
+                        continue;
+                    }
+                } else {
+                    deleteSms(smsSendQueueBean.getQueueId(), smsReceiptParam);
+
+                }
+                smsReceiptParam.setIsSuccess(false);
+                smsReceiptParam.setSessionId(null);
+                smsReceiptParam.setSmsstat(null);
+                smsReceiptParam.setErrCode(null);
+
+            }
+        }
+    }
+    /*这是一个静态函数，不用声明对象就可以用的*/
+    private  boolean isHave(String[] strs, String s) {
+        /*
+         * 此方法有两个参数，第一个是要查找的字符串数组，第二个是要查找的字符或字符串
+         */
+        for (int i = 0; i < strs.length; i++) {
+            if (strs[i].equals(s)) {// 循环查找字符串数组中的每个字符串中是否等于查找的内容
+                return true;// 查找到了就返回真，不在继续查询
+            }
+        }
+        return false;// 没找到返回false
+    }
+
+    private boolean deleteSms(Long queueId,SmsReceiptParamBean smsReceiptParam) {
+        boolean isSuccess = false;
+        try {
+            SmsSendQueue smsSendQueueBean = smsSendQueueMapper.selectById(queueId);//mp通用mapper切换
+            if(smsSendQueueBean != null) {
+                smsSendQueueMapper.deleteById(queueId);//mp通用mapper切换
+
+                SmsSendQueueHistParamBean smsSendQueueHistParam = new SmsSendQueueHistParamBean();
+                PropertyUtils.copyProperties(smsSendQueueHistParam, smsSendQueueBean);
+                if (smsReceiptParam.getIsSuccess()) {
+                    smsSendQueueHistParam.setSendFlag("1");
+                } else {
+                    smsSendQueueHistParam.setSendFlag("0");
+                }
+                smsSendQueueHistParam.setSessionId(smsReceiptParam.getSessionId());  //短信sessionid
+                smsSendQueueMapper.addSmsSendQueueHist(smsSendQueueHistParam);
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+            isSuccess = false;
+        }
+        return isSuccess;
+    }
+
+   private boolean updateSms(SmsSendQueue smsSendQueueParam) {
+        boolean isSuccess = false;
+        try {
+            smsSendQueueMapper.updateById(smsSendQueueParam);//mp通用mapper切换
+            isSuccess = true;
+        } catch (Exception e) {
+            WbtimerJobLogger.log(e);
+            isSuccess = false;
+        }
+        return isSuccess;
+    }
+}

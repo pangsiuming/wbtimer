@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+    <!-- 定义受环境影响易变的变量 -->
+    <context:property-placeholder location="classpath*:conf/wbtimer-job-executor.properties" ignore-unresolvable="true"  /><!--  加载 .properties  -->
+    <!-- 使用加密版的属性文件，可在构造函数属性加入要加密的属性，但目前内存加密后没重写如properties文件
+    <vo class="com.eshore.khala.core.controller.pub.utils.EncryptPropertyPlaceholderConfigurer">
+        <constructor-arg value="" />
+        <property name="locations">
+            <list>
+                <value>classpath:database.properties</value>
+            </list>
+        </property>
+    </vo> -->
+    <!-- 注册SpringContextUtil用于获取ApplicationContext -->
+    <bean id="springContextUtil" class="com.eshore.wbtimer.common.utils.SpringContextUtil"></bean>
+
+    <aop:aspectj-autoproxy />
+    <!-- ********************************* 基础配置 ********************************* -->
+
+    <!-- 配置01、JobHandler 扫描路径 -->
+    <context:component-scan base-package="com.eshore.wbtimer.executor" />
+
+    <!-- 配置02、执行器 -->
+    <bean id="wbtimerJobExecutor" class="com.eshore.wbtimer.core.executor.WbtimerJobExecutor" init-method="start" destroy-method="destroy" >
+        <!-- 执行器注册中心地址[选填]，为空则关闭自动注册 -->
+        <property name="adminAddresses" value="${wbtimer.job.admin.addresses}" />
+        <!-- 执行器AppName[选填]，为空则关闭自动注册 -->
+        <property name="appName" value="${wbtimer.job.executor.appname}" />
+        <!-- 执行器IP[选填]，为空则自动获取 -->
+        <property name="ip" value="${wbtimer.job.executor.ip}" />
+        <!-- 执行器端口号[选填]，为空则自动获取 -->
+        <property name="port" value="${wbtimer.job.executor.port}" />
+        <!-- 访问令牌[选填]，非空则进行匹配校验 -->
+        <property name="accessToken" value="${wbtimer.job.accessToken}" />
+        <!-- 执行器日志路径[选填]，为空则使用默认路径 -->
+        <property name="logPath" value="${wbtimer.job.executor.logpath}" />
+        <!-- 日志保存天数[选填]，值大于3时生效 -->
+        <property name="logRetentionDays" value="${wbtimer.job.executor.logretentiondays}" />
+    </bean>
+    <!--AOP统一异常管理-->
+    <bean id="handlerAspect" class="com.eshore.wbtimer.common.aspect.HandlerAspect"/>
+</beans>

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WsbsWsyslBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean" >
+    <constructor >
+      <idArg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXBM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BLRGH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BLRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLJGMS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="YSLJTDD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZZJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="XZQHDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BJBZSM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BZ" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BYZD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CREATE_TIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="DATA_SOURCE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="CLRGH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CLRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBXMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="NEEDSENDMSG" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SMSCONTENT" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AUTOSTATE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="AUTOTIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="YWCKDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CKFWRYZJHM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CKFWRYZJXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    HJSLBS, SBLSH, SXBM, BMMC, BLRGH, BLRXM, CLJGDM, CLJGMS, YSLJTDD, ZZJGDM, XZQHDM, 
+    BJBZSM, BZ, BYZD, CREATE_TIME, DATA_SOURCE, PROCESSINSTID, CLRGH, CLRXM, SBXMMC, 
+    NEEDSENDMSG, SMSCONTENT, AUTOSTATE, AUTOTIME, YWCKDM, CKFWRYZJHM, CKFWRYZJXM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSBS_WSYSL
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectByState" resultMap="BaseResultMap"  parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean">
+     SELECT  *
+     FROM WSBS_WSYSL A
+     WHERE CLJGDM =  #{cljgdm,jdbcType=VARCHAR}
+     AND AUTOSTATE = #{autostate,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from WSBS_WSYSL
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean" >
+    insert into WSBS_WSYSL (HJSLBS, SBLSH, SXBM, 
+      BMMC, BLRGH, BLRXM, 
+      CLJGDM, CLJGMS, YSLJTDD, 
+      ZZJGDM, XZQHDM, BJBZSM, 
+      BZ, BYZD, CREATE_TIME, 
+      DATA_SOURCE, PROCESSINSTID, CLRGH, 
+      CLRXM, SBXMMC, NEEDSENDMSG, 
+      SMSCONTENT, AUTOSTATE, AUTOTIME, 
+      YWCKDM, CKFWRYZJHM, CKFWRYZJXM
+      )
+    values (#{hjslbs,jdbcType=DECIMAL}, #{sblsh,jdbcType=VARCHAR}, #{sxbm,jdbcType=VARCHAR}, 
+      #{bmmc,jdbcType=VARCHAR}, #{blrgh,jdbcType=VARCHAR}, #{blrxm,jdbcType=VARCHAR}, 
+      #{cljgdm,jdbcType=VARCHAR}, #{cljgms,jdbcType=VARCHAR}, #{ysljtdd,jdbcType=VARCHAR}, 
+      #{zzjgdm,jdbcType=VARCHAR}, #{xzqhdm,jdbcType=VARCHAR}, #{bjbzsm,jdbcType=VARCHAR}, 
+      #{bz,jdbcType=VARCHAR}, #{byzd,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
+      #{dataSource,jdbcType=VARCHAR}, #{processinstid,jdbcType=DECIMAL}, #{clrgh,jdbcType=VARCHAR}, 
+      #{clrxm,jdbcType=VARCHAR}, #{sbxmmc,jdbcType=VARCHAR}, #{needsendmsg,jdbcType=VARCHAR}, 
+      #{smscontent,jdbcType=VARCHAR}, #{autostate,jdbcType=VARCHAR}, #{autotime,jdbcType=DATE}, 
+      #{ywckdm,jdbcType=VARCHAR}, #{ckfwryzjhm,jdbcType=VARCHAR}, #{ckfwryzjxm,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean" >
+    insert into WSBS_WSYSL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        HJSLBS,
+      </if>
+      <if test="sblsh != null" >
+        SBLSH,
+      </if>
+      <if test="sxbm != null" >
+        SXBM,
+      </if>
+      <if test="bmmc != null" >
+        BMMC,
+      </if>
+      <if test="blrgh != null" >
+        BLRGH,
+      </if>
+      <if test="blrxm != null" >
+        BLRXM,
+      </if>
+      <if test="cljgdm != null" >
+        CLJGDM,
+      </if>
+      <if test="cljgms != null" >
+        CLJGMS,
+      </if>
+      <if test="ysljtdd != null" >
+        YSLJTDD,
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM,
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM,
+      </if>
+      <if test="bjbzsm != null" >
+        BJBZSM,
+      </if>
+      <if test="bz != null" >
+        BZ,
+      </if>
+      <if test="byzd != null" >
+        BYZD,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE,
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID,
+      </if>
+      <if test="clrgh != null" >
+        CLRGH,
+      </if>
+      <if test="clrxm != null" >
+        CLRXM,
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC,
+      </if>
+      <if test="needsendmsg != null" >
+        NEEDSENDMSG,
+      </if>
+      <if test="smscontent != null" >
+        SMSCONTENT,
+      </if>
+      <if test="autostate != null" >
+        AUTOSTATE,
+      </if>
+      <if test="autotime != null" >
+        AUTOTIME,
+      </if>
+      <if test="ywckdm != null" >
+        YWCKDM,
+      </if>
+      <if test="ckfwryzjhm != null" >
+        CKFWRYZJHM,
+      </if>
+      <if test="ckfwryzjxm != null" >
+        CKFWRYZJXM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        #{hjslbs,jdbcType=DECIMAL},
+      </if>
+      <if test="sblsh != null" >
+        #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="bmmc != null" >
+        #{bmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="blrgh != null" >
+        #{blrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="blrxm != null" >
+        #{blrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgdm != null" >
+        #{cljgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgms != null" >
+        #{cljgms,jdbcType=VARCHAR},
+      </if>
+      <if test="ysljtdd != null" >
+        #{ysljtdd,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="bjbzsm != null" >
+        #{bjbzsm,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="needsendmsg != null" >
+        #{needsendmsg,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="autostate != null" >
+        #{autostate,jdbcType=VARCHAR},
+      </if>
+      <if test="autotime != null" >
+        #{autotime,jdbcType=DATE},
+      </if>
+      <if test="ywckdm != null" >
+        #{ywckdm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjhm != null" >
+        #{ckfwryzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjxm != null" >
+        #{ckfwryzjxm,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean" >
+    update WSBS_WSYSL
+    <set >
+      <if test="sblsh != null" >
+        SBLSH = #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        SXBM = #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="bmmc != null" >
+        BMMC = #{bmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="blrgh != null" >
+        BLRGH = #{blrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="blrxm != null" >
+        BLRXM = #{blrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgdm != null" >
+        CLJGDM = #{cljgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="cljgms != null" >
+        CLJGMS = #{cljgms,jdbcType=VARCHAR},
+      </if>
+      <if test="ysljtdd != null" >
+        YSLJTDD = #{ysljtdd,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="bjbzsm != null" >
+        BJBZSM = #{bjbzsm,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        BZ = #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        BYZD = #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="dataSource != null" >
+        DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="clrgh != null" >
+        CLRGH = #{clrgh,jdbcType=VARCHAR},
+      </if>
+      <if test="clrxm != null" >
+        CLRXM = #{clrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="needsendmsg != null" >
+        NEEDSENDMSG = #{needsendmsg,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        SMSCONTENT = #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="autostate != null" >
+        AUTOSTATE = #{autostate,jdbcType=VARCHAR},
+      </if>
+      <if test="autotime != null" >
+        AUTOTIME = #{autotime,jdbcType=DATE},
+      </if>
+      <if test="ywckdm != null" >
+        YWCKDM = #{ywckdm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjhm != null" >
+        CKFWRYZJHM = #{ckfwryzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjxm != null" >
+        CKFWRYZJXM = #{ckfwryzjxm,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean" >
+    update WSBS_WSYSL
+    set SBLSH = #{sblsh,jdbcType=VARCHAR},
+      SXBM = #{sxbm,jdbcType=VARCHAR},
+      BMMC = #{bmmc,jdbcType=VARCHAR},
+      BLRGH = #{blrgh,jdbcType=VARCHAR},
+      BLRXM = #{blrxm,jdbcType=VARCHAR},
+      CLJGDM = #{cljgdm,jdbcType=VARCHAR},
+      CLJGMS = #{cljgms,jdbcType=VARCHAR},
+      YSLJTDD = #{ysljtdd,jdbcType=VARCHAR},
+      ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      BJBZSM = #{bjbzsm,jdbcType=VARCHAR},
+      BZ = #{bz,jdbcType=VARCHAR},
+      BYZD = #{byzd,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=DATE},
+      DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      CLRGH = #{clrgh,jdbcType=VARCHAR},
+      CLRXM = #{clrxm,jdbcType=VARCHAR},
+      SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      NEEDSENDMSG = #{needsendmsg,jdbcType=VARCHAR},
+      SMSCONTENT = #{smscontent,jdbcType=VARCHAR},
+      AUTOSTATE = #{autostate,jdbcType=VARCHAR},
+      AUTOTIME = #{autotime,jdbcType=DATE},
+      YWCKDM = #{ywckdm,jdbcType=VARCHAR},
+      CKFWRYZJHM = #{ckfwryzjhm,jdbcType=VARCHAR},
+      CKFWRYZJXM = #{ckfwryzjxm,jdbcType=VARCHAR}
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+</mapper>

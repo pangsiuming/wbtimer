@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.UpdateStartPYMapper" >
+
+    <select id="getMaxDate" resultType="string">
+        select TO_CHAR(max(create_time),'yyyy/MM/dd HH24:MI:SS') maxTime from WSBS_FGBL_INFO
+        where tjfs='1'
+    </select>
+
+    <select id="queryFgErrorInfo" parameterType="string" resultType="java.util.Map">
+        SELECT ID,APPLYID,SYSTEM_FALG,SEND_DATE,SEND_FLAG,REMARK
+        FROM WSBS_FG_ERROR A
+         where A.APPLYID =#{applyId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="saveWsbsFgError" parameterType="com.eshore.wbtimer.executor.service.bean.WsbsFgErrorParam">
+        INSERT INTO WSBS_FG_ERROR
+        (
+        ID ,
+        APPLYID ,
+        SYSTEM_FALG ,
+        SEND_DATE ,
+        SEND_FLAG ,
+        REMARK ,
+        SEND_JSON
+        )
+        VALUES
+        (
+        #{id,jdbcType=NUMERIC} ,
+        #{applyid,jdbcType=VARCHAR} ,
+        #{systemFalg,jdbcType=VARCHAR} ,
+        #{sendDate,jdbcType=TIMESTAMP},
+        #{sendFlag,jdbcType=VARCHAR} ,
+        #{remark,jdbcType=CLOB} ,
+        #{sendJson,jdbcType=CLOB}
+        )
+    </insert>
+    <select id="queryFGSLInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+        WSBS_FGBL_INFO_ID ID,
+        SBLSH ,
+        SXBM ,
+        PROJCODE ,
+        ADMIN_ORG ADMINORG,
+        APPLYID
+        from WSBS_FGBL_INFO A
+        <where> 1=1
+            <if test="sxbm!=null">
+             AND  SXBM = #{sxbm,jdbcType=VARCHAR}
+            </if>
+            <if test="applyId!=null">
+              AND  APPLYID = #{applyId,jdbcType=VARCHAR}
+            </if>
+            <if test="backApplyidSblsh!=null">
+              AND  BACK_APPLYID_SBLSH IN (${backApplyidSblsh})
+            </if>
+            <if test="backProjcodeSblsh!=null">
+               AND BACK_PROJCODE_SBLSH IN (${backProjcodeSblsh})
+            </if>
+            <if test="tjfs!=null">
+              AND TJFS = #{tjfs,jdbcType=VARCHAR}
+            </if>
+            <if test="extraCondition!=null">
+              AND  exists(select 1 from wsbs_sb sb where sb.sblsh = A.sblsh )
+            </if>
+        </where>
+    </select>
+
+    <select id="getAdminOrgByServiceCode" parameterType="string" resultType="string">
+        select  ADMIN_ORG ADMINORG from SERVICE_ITEM t
+        where t.service_code=#{serviceCode,jdbcType=VARCHAR} and t.status='PUBLISHED'
+    </select>
+    <select id="getXzqhdm" parameterType="string" resultType="string">
+        select division_code CODE from zh_yx_zcsp.tb_sm_organ where org_code=#{code,jdbcType=VARCHAR}
+    </select>
+    <select id="getFormIdBySxbm"  parameterType="string" resultType="string">
+        select t.menuid formId from matter_pymenu_relation t where t.mattercode=#{serviceCode,jdbcType=VARCHAR} and t.menutype=1 and t.viewflag=1 and t.formtype='sb'
+    </select>
+    <select id="getFlowIdBySxbm"  parameterType="string" resultType="string">
+        select t.menuid FLOWID from matter_pymenu_relation t where t.mattercode=#{serviceCode,jdbcType=VARCHAR} and t.menutype=2 and t.viewflag=1 and t.formtype is null
+    </select>
+    <select id="getDataRelationMapping" resultType="java.util.Map">
+        select
+        A.FIELD_ID fieldId,
+        A.EOS_FIELD_ID eosfieldId,
+        EOS_INFOITEM_ID infoItemId,
+        EOS_FIELD_NAME eosfieldName
+        from WBSB_DATA_RELATION_MAPPING A where
+        A.FORM_ID=#{formId,jdbcType=VARCHAR} AND A.EOS_CLASS_TYPE=#{eosType,jdbcType=VARCHAR}
+       <if test="fieldId!=null">
+          AND  A.FIELD_ID = #{fieldId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDocumentName" parameterType="string" resultType="string">
+        select document_name DNAME from SRVSDOC_SRVSIM t where t.srvsdoc_srvsim_id=#{ssid,jdbcType=VARCHAR}
+    </select>
+    <select id="getSubFormMapping" resultType="java.util.Map">
+        select * from WBSB_DATA_RELATION_MAPPING t
+        where t.eos_class_type = '3'
+        and t.FORM_ID = #{formId,jdbcType=VARCHAR}
+        and t.TABLE_CODE = #{tableCode,jdbcType=VARCHAR}
+    </select>
+    <select id="getSubFormTableInfo" resultType="java.util.Map">
+        select * from formfileuploadconfig t
+        where t.FORMID = #{formId,jdbcType=VARCHAR}
+        and t.TABLECODE = #{tableCode,jdbcType=VARCHAR}
+    </select>
+    <select id="getTableGridByFormIdAndTableCode" resultType="string">
+       SELECT TABLEID ,  MATTERCODE ,   FORMID ,
+      CREATETIME , CREATOR ,  TABLENAME ,   TABLECODE ,   UPDATETIME ,
+      APPLYTYPE ,  TABLEGRID ,  TEMPLATE ,  SHOWADDDELBTN
+   FROM FORMFILEUPLOADCONFIG t
+       where t.FORMID = #{formId,jdbcType=VARCHAR}
+        and t.TABLECODE = #{tableCode,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="saveWsbsSbFiles" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbFilesBean">
+         INSERT INTO WSBS_SB_FILES
+           (   WSBS_SB_FILES_ID ,
+                HJSLBS ,
+                FILES_ID ,
+                FILE_NAME ,
+                FILE_TYPE ,
+                CERT_ID ,
+                HOLDER ,
+                CERT_DATE ,
+                EXP_DATE ,
+                DZFJS ,
+                SBLSH ,
+                CREATE_TIME ,
+                ISREQUIRE ,
+                DOCUMENT_NAME ,
+                FILE_DATA ,
+                SAVE_ROUTE ,
+                STATE ,
+                IF_MUST_SUBMIT ,
+                STAFF_ID ,
+                MOD_DATE ,
+                CHECK_RESULT ,
+                IF_ALREAD_SUBMIT ,
+                REMARK ,
+                EXT_FIELD1 ,
+                EXT_FIELD2 ,
+                EXT_FIELD3 ,
+                EXT_FIELD4 ,
+                EXT_FIELD5 ,
+                SRVSDOC_SRVSIM_ID ,
+                DATA_SOUCE ,
+                WSBS_SB_FILES_CODE ,
+                USER_ID ,
+                DZZLK_ZLBM
+                )
+                VALUES
+                (
+                sq_wsbs_sb_files.nextval ,
+                #{hjslbs,jdbcType=DECIMAL} ,
+                #{filesId,jdbcType=DECIMAL} ,
+                #{fileName,jdbcType=VARCHAR} ,
+                #{fileType,jdbcType=VARCHAR} ,
+                #{certId,jdbcType=VARCHAR} ,
+                #{holder,jdbcType=VARCHAR} ,
+                #{certDate,jdbcType=TIMESTAMP} ,
+                #{expDate,jdbcType=VARCHAR} ,
+                #{dzfjs,jdbcType=VARCHAR} ,
+                #{sblsh,jdbcType=VARCHAR} ,
+                #{createTime,jdbcType=TIMESTAMP} ,
+                #{isrequire,jdbcType=VARCHAR} ,
+                #{documentName,jdbcType=VARCHAR} ,
+                #{fileData,jdbcType=BLOB} ,
+                #{saveRoute,jdbcType=VARCHAR} ,
+                #{state,jdbcType=VARCHAR} ,
+                #{ifMustSubmit,jdbcType=VARCHAR} ,
+                #{staffId,jdbcType=VARCHAR} ,
+                SYSDATE ,
+                #{checkResult,jdbcType=VARCHAR} ,
+                #{ifAlreadSubmit,jdbcType=VARCHAR} ,
+                #{remark,jdbcType=VARCHAR} ,
+                #{extField1,jdbcType=VARCHAR} ,
+                #{extField2,jdbcType=VARCHAR} ,
+                #{extField3,jdbcType=VARCHAR} ,
+                #{extField4,jdbcType=VARCHAR} ,
+                #{extField5,jdbcType=VARCHAR} ,
+                #{srvsdocSrvsimId,jdbcType=NUMERIC} ,
+                #{dataSouce,jdbcType=VARCHAR} ,
+                #{wsbsSbFilesCode,jdbcType=VARCHAR} ,
+                #{userId,jdbcType=VARCHAR} ,
+                #{dzzlkZlbm,jdbcType=VARCHAR}
+                )
+    </insert>
+    <insert id="saveFormfileuploaddata" parameterType="com.eshore.wbtimer.executor.mapper.bean.FormfileuploaddataBean">
+        INSERT INTO FORMFILEUPLOADDATA
+        (
+        FILEID ,
+        BUSINESSID ,
+        TRSEQUENCE ,
+        TABLEID ,
+        TABLECODE ,
+        TABLENAME ,
+        ELEMENTID ,
+        ELEMENTNAME ,
+        ELEMENTVALUE ,
+        CREATETIME ,
+        CREATOR ,
+        FORMID ,
+        APPLYTYPE
+        )
+        VALUES
+        (
+        #{fileid,jdbcType=VARCHAR} ,
+        #{businessid,jdbcType=VARCHAR} ,
+        #{trsequence,jdbcType=VARCHAR} ,
+        #{tableid,jdbcType=VARCHAR} ,
+        #{tablecode,jdbcType=VARCHAR} ,
+        #{tablename,jdbcType=VARCHAR} ,
+        #{elementid,jdbcType=VARCHAR} ,
+        #{elementname,jdbcType=VARCHAR} ,
+        #{elementvalue,jdbcType=VARCHAR} ,
+        #{createtime,jdbcType=TIMESTAMP} ,
+        #{creator,jdbcType=VARCHAR} ,
+        #{formid,jdbcType=VARCHAR} ,
+        #{applytype,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="saveFormfileuploaddatashow" parameterType="com.eshore.wbtimer.executor.mapper.bean.FormfileuploaddatashowBean">
+        INSERT INTO FORMFILEUPLOADDATASHOW
+    (
+      TABLEID ,
+      MATTERCODE ,
+      FORMID ,
+      CREATETIME ,
+      CREATOR ,
+      TABLENAME ,
+      TABLECODE ,
+      UPDATETIME ,
+      APPLYTYPE ,
+      TABLEGRID ,
+      BUSINESSID ,
+      FILEID ,
+      SHOWADDDELBTN
+    )
+    VALUES
+    (
+      #{tableid,jdbcType=VARCHAR} ,
+      #{mattercode,jdbcType=VARCHAR} ,
+      #{formid,jdbcType=VARCHAR} ,
+      #{createtime,jdbcType=TIMESTAMP} ,
+      #{creator,jdbcType=VARCHAR} ,
+      #{tablename,jdbcType=VARCHAR} ,
+      #{tablecode,jdbcType=VARCHAR} ,
+      #{updatetime,jdbcType=TIMESTAMP} ,
+      #{applytype,jdbcType=VARCHAR} ,
+      #{tablegrid,jdbcType=CLOB} ,
+      #{businessid,jdbcType=VARCHAR} ,
+      #{fileid,jdbcType=VARCHAR} ,
+      #{showadddelbtn,jdbcType=VARCHAR}
+    )
+    </insert>
+
+    <insert id="saveWsbsFgData" parameterType="com.eshore.wbtimer.executor.service.bean.WsbsFgDataParam">
+    INSERT INTO WSBS_FG_DATA
+    (
+      ID ,
+      APPLY_ID ,
+      SBLSH ,
+      FG_DATA ,
+      CREATE_TIME
+    )
+    VALUES
+    (
+      #{id,jdbcType=NUMERIC} ,
+      #{applyId,jdbcType=VARCHAR} ,
+      #{sblsh,jdbcType=VARCHAR} ,
+      #{fgData,jdbcType=BLOB} ,
+      #{createTime,jdbcType=TIMESTAMP}
+    )
+    </insert>
+
+</mapper>

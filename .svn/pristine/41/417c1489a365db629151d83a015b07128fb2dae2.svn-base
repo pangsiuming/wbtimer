@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eshore.wbtimer.executor.mapper.SmsSendQueueMapper">
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.SmsSendQueue">
+    <constructor>
+      <idArg column="QUEUE_ID" javaType="java.lang.Long" jdbcType="DECIMAL" />
+      <arg column="PHONENUMBER" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="SMS_CONTENT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CREATE_DATE" javaType="java.util.Date" jdbcType="DATE" />
+      <arg column="CREATE_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="SEND_TIMES" javaType="java.lang.Short" jdbcType="DECIMAL" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    QUEUE_ID,PHONENUMBER,SMS_CONTENT,CREATE_DATE,CREATE_NAME,SEND_TIMES
+  </sql>
+
+  <select id="findAll"  resultMap="BaseResultMap">
+      SELECT    <include refid="Base_Column_List" />
+      from SMS_SEND_QUEUE
+      <where>
+        <if test="rownum!=null ">
+            <if test="rownum>0">
+              ROWNUM &lt;= #{rownum}
+            </if>
+        </if>
+      </where>
+    <if test="extraCondition!=null">
+      ORDER BY ${extraCondition}
+    </if>
+  </select>
+  <insert id="addSmsSendQueueHist" parameterType="com.eshore.wbtimer.executor.service.bean.SmsSendQueueHistParamBean">
+    insert into SMS_SEND_QUEUE_HIST
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="histId != null">
+        HIST_ID,
+      </if>
+      <if test="queueId != null">
+        QUEUE_ID,
+      </if>
+      <if test="phonenumber != null">
+        PHONENUMBER,
+      </if>
+      <if test="smsContent != null">
+        SMS_CONTENT,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="createName != null">
+        CREATE_NAME,
+      </if>
+      <if test="sendTimes != null">
+        SEND_TIMES,
+      </if>
+      <if test="sendDate!=null">
+        SEND_DATE,
+      </if>
+      <if test="sendFlag!=null">
+        SEND_FLAG,
+      </if>
+      <if test="sessionId!=null">
+        SESSION_ID,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="histId != null">
+        #{HIST_ID,jdbcType=DECIMAL},
+      </if>
+      <if test="queueId != null">
+        #{queueId,jdbcType=DECIMAL},
+      </if>
+      <if test="phonenumber != null">
+        #{phonenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="smsContent != null">
+        #{smsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTimes != null">
+        #{sendTimes,jdbcType=DECIMAL},
+      </if>
+      <if test="sendDate!=null">
+        #{sendDate,jdbcType=DATE},
+      </if>
+      <if test="sendFlag!=null">
+        #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionId!=null">
+        #{sessionId,jdbcType=VARCHAR }
+      </if>
+    </trim>
+  </insert>
+</mapper>

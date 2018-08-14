@@ -1,0 +1,149 @@
+package com.eshore.wbtimer.executor.mapper.bean;
+
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
+import java.util.Date;
+
+@TableName("MESSAGE_TEMPLATE")
+public class MessageTemplate {
+    @TableId(value = "TEMPLATE_ID",type = IdType.AUTO)
+    private Long templateId;
+
+    private String templateCode;
+
+    private String content;
+
+    private String modiStaff;
+
+    private Date modiDate;
+
+    private String templateName;
+
+    private String orgCode;
+
+    private String isMust;
+
+    private String orgName;
+    private Long msgConfId;
+
+    public MessageTemplate(Long templateId, String templateCode, String content, String modiStaff, Date modiDate, String templateName, String orgCode, String isMust,String orgName,Long msgConfId) {
+        this.templateId = templateId;
+        this.templateCode = templateCode;
+        this.content = content;
+        this.modiStaff = modiStaff;
+        this.modiDate = modiDate;
+        this.templateName = templateName;
+        this.orgCode = orgCode;
+        this.isMust = isMust;
+        this.orgName  = orgName;
+        this.msgConfId = msgConfId;
+    }
+    public MessageTemplate(Long templateId, String templateCode, String content, String modiStaff, Date modiDate, String templateName, String orgCode, String isMust, String orgName) {
+        this.templateId = templateId;
+        this.templateCode = templateCode;
+        this.content = content;
+        this.modiStaff = modiStaff;
+        this.modiDate = modiDate;
+        this.templateName = templateName;
+        this.orgCode = orgCode;
+        this.isMust = isMust;
+        this.orgName = orgName;
+    }
+
+    public MessageTemplate(Long templateId, String templateCode, String content, String modiStaff, Date modiDate, String templateName, String orgCode, String isMust) {
+        this.templateId = templateId;
+        this.templateCode = templateCode;
+        this.content = content;
+        this.modiStaff = modiStaff;
+        this.modiDate = modiDate;
+        this.templateName = templateName;
+        this.orgCode = orgCode;
+        this.isMust = isMust;
+    }
+
+    public MessageTemplate() {
+        super();
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public String getTemplateCode() {
+        return templateCode;
+    }
+
+    public void setTemplateCode(String templateCode) {
+        this.templateCode = templateCode == null ? null : templateCode.trim();
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
+    }
+
+    public String getModiStaff() {
+        return modiStaff;
+    }
+
+    public void setModiStaff(String modiStaff) {
+        this.modiStaff = modiStaff == null ? null : modiStaff.trim();
+    }
+
+    public Date getModiDate() {
+        return modiDate;
+    }
+
+    public void setModiDate(Date modiDate) {
+        this.modiDate = modiDate;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName == null ? null : templateName.trim();
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public String getIsMust() {
+        return isMust;
+    }
+
+    public void setIsMust(String isMust) {
+        this.isMust = isMust == null ? null : isMust.trim();
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public Long getMsgConfId() {
+        return msgConfId;
+    }
+
+    public void setMsgConfId(Long msgConfId) {
+        this.msgConfId = msgConfId;
+    }
+}

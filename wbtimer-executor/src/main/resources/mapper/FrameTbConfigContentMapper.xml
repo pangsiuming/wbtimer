@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.FrameTbConfigContentMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.FrameTbConfigContent" >
+    <constructor >
+      <idArg column="CONTENTID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="TYPEID" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="CONTENTNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CONTENTCODE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CONTENTVALUE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BAK1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BAK2" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BAK3" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+
+  <select id="selectContentByTypeCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT A.*
+    FROM FRAME_TB_CONFIG_CONTENT A, FRAME_TB_CONFIG_TYPE B
+    where A.TYPEID = B.TYPEID
+    AND B.TYPECODE = #{typecode,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

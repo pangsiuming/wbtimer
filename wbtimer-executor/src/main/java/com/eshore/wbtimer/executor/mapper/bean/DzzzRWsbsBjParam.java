@@ -1,0 +1,322 @@
+package com.eshore.wbtimer.executor.mapper.bean;
+
+import com.eshore.wbtimer.executor.service.bean.DBTableParamBean;
+
+import java.util.Date;
+
+/**
+ * ����Ϊ��ݿ��Ӧ��javabean���룬ͳһ���Զ�������ɣ��벻Ҫ�˹��޸� 
+ *
+ * @author hwe
+ * @version
+ * 
+ */
+public class DzzzRWsbsBjParam extends DBTableParamBean
+{
+	private Long id;
+	private String sblsh;
+	private String sblshLikeRange;
+	private String sxbm;
+	private String sxbmLikeRange;
+	private String sxmc;
+	private String sxmcLikeRange;
+	private String licenseCode;
+	private String licenseCodeLikeRange;
+	private String authCode;
+	private String authCodeLikeRange;
+	private String dzzzName;
+	private String dzzzNameLikeRange;
+	private String dzzzCode;
+	private String dzzzCodeLikeRange;
+	private String status;
+	private String statusLikeRange;
+	private Date createTime;
+	private String createTimeRange1;
+	private String createTimeRange2;
+	private Date registerTime;
+	private String registerTimeRange1;
+	private String registerTimeRange2;
+	private Date issueTime;
+	private String issueTimeRange1;
+	private String issueTimeRange2;
+	private Date abolishTime;
+	private String abolishTimeRange1;
+	private String abolishTimeRange2;
+	private String alertStatus;
+	private String alertStatusLikeRange;
+	private Long restDate;
+
+
+	public Long getId() {
+	    return id;
+	}
+	
+	public void setId(Long id) {
+	    this.id = id;
+	}
+
+
+	public String getSblsh() {
+	    return sblsh;
+	}
+	
+	public void setSblsh(String sblsh) {
+	    this.sblsh = sblsh;
+	}
+
+	public String getSblshLikeRange() {
+	    return sblshLikeRange;
+	}
+	
+	public void setSblshLikeRange(String sblshLikeRange) {
+	    this.sblshLikeRange = sblshLikeRange;
+	}
+ 
+
+	public String getSxbm() {
+	    return sxbm;
+	}
+	
+	public void setSxbm(String sxbm) {
+	    this.sxbm = sxbm;
+	}
+
+	public String getSxbmLikeRange() {
+	    return sxbmLikeRange;
+	}
+	
+	public void setSxbmLikeRange(String sxbmLikeRange) {
+	    this.sxbmLikeRange = sxbmLikeRange;
+	}
+ 
+
+	public String getSxmc() {
+	    return sxmc;
+	}
+	
+	public void setSxmc(String sxmc) {
+	    this.sxmc = sxmc;
+	}
+
+	public String getSxmcLikeRange() {
+	    return sxmcLikeRange;
+	}
+	
+	public void setSxmcLikeRange(String sxmcLikeRange) {
+	    this.sxmcLikeRange = sxmcLikeRange;
+	}
+ 
+
+	public String getLicenseCode() {
+	    return licenseCode;
+	}
+	
+	public void setLicenseCode(String licenseCode) {
+	    this.licenseCode = licenseCode;
+	}
+
+	public String getLicenseCodeLikeRange() {
+	    return licenseCodeLikeRange;
+	}
+	
+	public void setLicenseCodeLikeRange(String licenseCodeLikeRange) {
+	    this.licenseCodeLikeRange = licenseCodeLikeRange;
+	}
+ 
+
+	public String getAuthCode() {
+	    return authCode;
+	}
+	
+	public void setAuthCode(String authCode) {
+	    this.authCode = authCode;
+	}
+
+	public String getAuthCodeLikeRange() {
+	    return authCodeLikeRange;
+	}
+	
+	public void setAuthCodeLikeRange(String authCodeLikeRange) {
+	    this.authCodeLikeRange = authCodeLikeRange;
+	}
+ 
+
+	public String getDzzzName() {
+	    return dzzzName;
+	}
+	
+	public void setDzzzName(String dzzzName) {
+	    this.dzzzName = dzzzName;
+	}
+
+	public String getDzzzNameLikeRange() {
+	    return dzzzNameLikeRange;
+	}
+	
+	public void setDzzzNameLikeRange(String dzzzNameLikeRange) {
+	    this.dzzzNameLikeRange = dzzzNameLikeRange;
+	}
+ 
+
+	public String getDzzzCode() {
+	    return dzzzCode;
+	}
+	
+	public void setDzzzCode(String dzzzCode) {
+	    this.dzzzCode = dzzzCode;
+	}
+
+	public String getDzzzCodeLikeRange() {
+	    return dzzzCodeLikeRange;
+	}
+	
+	public void setDzzzCodeLikeRange(String dzzzCodeLikeRange) {
+	    this.dzzzCodeLikeRange = dzzzCodeLikeRange;
+	}
+ 
+
+	public String getStatus() {
+	    return status;
+	}
+	
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+	public String getStatusLikeRange() {
+	    return statusLikeRange;
+	}
+	
+	public void setStatusLikeRange(String statusLikeRange) {
+	    this.statusLikeRange = statusLikeRange;
+	}
+ 
+
+	public Date getCreateTime() {
+	    return createTime;
+	}
+	
+	public void setCreateTime(Date createTime) {
+	    this.createTime = createTime;
+	}
+
+	public String getCreateTimeRange1() {
+	    return createTimeRange1;
+	}
+	
+	public void setCreateTimeRange1(String createTimeRange1) {
+	    this.createTimeRange1 = createTimeRange1;
+	}
+ 
+	public String getCreateTimeRange2() {
+	    return createTimeRange2;
+	}
+	
+	public void setCreateTimeRange2(String createTimeRange2) {
+	    this.createTimeRange2 = createTimeRange2;
+	}
+
+
+	public Date getRegisterTime() {
+	    return registerTime;
+	}
+	
+	public void setRegisterTime(Date registerTime) {
+	    this.registerTime = registerTime;
+	}
+
+	public String getRegisterTimeRange1() {
+	    return registerTimeRange1;
+	}
+	
+	public void setRegisterTimeRange1(String registerTimeRange1) {
+	    this.registerTimeRange1 = registerTimeRange1;
+	}
+ 
+	public String getRegisterTimeRange2() {
+	    return registerTimeRange2;
+	}
+	
+	public void setRegisterTimeRange2(String registerTimeRange2) {
+	    this.registerTimeRange2 = registerTimeRange2;
+	}
+
+
+	public Date getIssueTime() {
+	    return issueTime;
+	}
+	
+	public void setIssueTime(Date issueTime) {
+	    this.issueTime = issueTime;
+	}
+
+	public String getIssueTimeRange1() {
+	    return issueTimeRange1;
+	}
+	
+	public void setIssueTimeRange1(String issueTimeRange1) {
+	    this.issueTimeRange1 = issueTimeRange1;
+	}
+ 
+	public String getIssueTimeRange2() {
+	    return issueTimeRange2;
+	}
+	
+	public void setIssueTimeRange2(String issueTimeRange2) {
+	    this.issueTimeRange2 = issueTimeRange2;
+	}
+
+
+	public Date getAbolishTime() {
+	    return abolishTime;
+	}
+	
+	public void setAbolishTime(Date abolishTime) {
+	    this.abolishTime = abolishTime;
+	}
+
+	public String getAbolishTimeRange1() {
+	    return abolishTimeRange1;
+	}
+	
+	public void setAbolishTimeRange1(String abolishTimeRange1) {
+	    this.abolishTimeRange1 = abolishTimeRange1;
+	}
+ 
+	public String getAbolishTimeRange2() {
+	    return abolishTimeRange2;
+	}
+	
+	public void setAbolishTimeRange2(String abolishTimeRange2) {
+	    this.abolishTimeRange2 = abolishTimeRange2;
+	}
+
+
+	public String getAlertStatus() {
+	    return alertStatus;
+	}
+	
+	public void setAlertStatus(String alertStatus) {
+	    this.alertStatus = alertStatus;
+	}
+
+	public String getAlertStatusLikeRange() {
+	    return alertStatusLikeRange;
+	}
+	
+	public void setAlertStatusLikeRange(String alertStatusLikeRange) {
+	    this.alertStatusLikeRange = alertStatusLikeRange;
+	}
+ 
+
+	public Long getRestDate() {
+	    return restDate;
+	}
+	
+	public void setRestDate(Long restDate) {
+	    this.restDate = restDate;
+	}
+
+  
+}
+

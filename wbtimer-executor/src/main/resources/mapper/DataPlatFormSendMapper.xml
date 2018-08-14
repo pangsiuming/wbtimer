@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.DataPlatFormSendMapper" >
+
+    <select id="getExItemHalfInfo" parameterType="com.eshore.wbtimer.executor.service.bean.ExItemHalfParam" resultType="com.eshore.wbtimer.executor.mapper.bean.ExItemHalfBean">
+        SELECT * FROM   EX_ITEM_HALF A
+        <where> 1=1
+            <if test="serviceCode!=null">
+               AND SERVICE_CODE=#{serviceCode,jdbcType=VARCHAR}
+            </if>
+            <if test="hjSpcl!=null">
+              AND  HJ_SPCL = #{hjSpcl,jdbcType=NUMERIC}
+            </if>
+        </where>
+    </select>
+
+    <select id="getExSendSBERROR" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT sb.*
+        FROM wsbs_sb sb, SEND_STEP_ERROR sp
+        WHERE sb.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE sb.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        and (sb.SUBMIT_STATUS='2' or  sb.SUBMIT_STATUS IS NULL)
+    </select>
+    <select id="getExSendSB" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT sb.*
+        FROM wsbs_sb sb, send_step sp
+        WHERE sb.hjslbs = sp.mission_id(+)
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+        FROM SEND_STEP_ERROR
+        WHERE sb.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+        AND sp.mission_id is null
+        and (sb.SUBMIT_STATUS='2' or  sb.SUBMIT_STATUS IS NULL)
+    </select>
+    <select id="getExSendWsyslError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean">
+        SELECT wsysl.*
+        FROM wsbs_wsysl wsysl, SEND_STEP_ERROR sp
+        WHERE wsysl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE wsysl.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = wsysl.SBLSH)
+    </select>
+    <select id="getExSendWsysl" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsWsyslBean">
+        SELECT wsysl.*
+        FROM wsbs_wsysl wsysl, send_step sp
+        WHERE wsysl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+        FROM SEND_STEP_ERROR
+        WHERE wsysl.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = wsysl.SBLSH)
+    </select>
+    <select id="getExSendSlError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSlBean">
+        SELECT sl.*
+        FROM wsbs_sl sl, SEND_STEP_ERROR sp
+        WHERE sl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE sl.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = sl.SBLSH)
+    </select>
+    <select id="getExSendSl" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSlBean">
+         SELECT sl.*
+        FROM wsbs_sl sl, send_step sp
+       WHERE sl.hjslbs = sp.mission_id(+)
+         AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE SL.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = sl.SBLSH)
+    </select>
+    <select id="getExSendSpclError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean">
+        SELECT spcl.*
+        FROM wsbs_spcl spcl, SEND_STEP_ERROR sp
+        WHERE spcl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE spcl.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = SPCL.SBLSH)
+    </select>
+    <select id="getExSendSpcl" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSpclBean">
+	  SELECT spcl.*
+         FROM wsbs_spcl spcl, send_step sp
+        WHERE spcl.hjslbs = sp.mission_id(+)
+          AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE spcl.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = SPCL.SBLSH)
+    </select>
+    <select id="getExSendBzgzError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBzgzBean">
+        SELECT bzgz.*
+        FROM wsbs_bzgz bzgz, SEND_STEP_ERROR sp
+        WHERE bzgz.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE bzgz.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzgz.SBLSH)
+    </select>
+    <select id="getExSendBzgz" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBzgzBean">
+         SELECT bzgz.*
+      	FROM wsbs_bzgz bzgz, send_step sp
+      WHERE bzgz.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE bzgz.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = bzgz.SBLSH)
+    </select>
+    <select id="getExSendBzslError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBzslBean">
+        SELECT bzsl.*
+        FROM wsbs_bzsl bzsl, SEND_STEP_ERROR sp
+        WHERE bzsl.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE bzsl.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = bzsl.SBLSH)
+    </select>
+    <select id="getExSendBzsl" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBzslBean">
+         SELECT bzsl.*
+      	FROM wsbs_bzsl bzsl, send_step sp
+      WHERE bzsl.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE bzsl.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = bzsl.SBLSH)
+    </select>
+
+    <select id="getExSendTbcxsqError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean">
+        SELECT tbcxsq.*
+        FROM wsbs_tbcxsq tbcxsq, SEND_STEP_ERROR sp
+        WHERE tbcxsq.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE tbcxsq.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxsq.SBLSH)
+    </select>
+    <select id="getExSendTbcxsq" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean">
+    SELECT tbcxsq.*
+      	FROM wsbs_tbcxsq tbcxsq, send_step sp
+      WHERE tbcxsq.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE tbcxsq.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+     AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = tbcxsq.SBLSH)
+    </select>
+    <select id="getExSendTbcxjgError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxjgBean">
+        SELECT tbcxjg.*
+        FROM wsbs_tbcxjg tbcxjg, SEND_STEP_ERROR sp
+        WHERE tbcxjg.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE tbcxjg.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = tbcxjg.SBLSH)
+    </select>
+    <select id="getExSendTbcxjg" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxjgBean">
+         SELECT tbcxjg.*
+      	FROM wsbs_tbcxjg tbcxjg, send_step sp
+      WHERE tbcxjg.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE tbcxjg.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+     AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = tbcxjg.SBLSH)
+    </select>
+    <select id="getExSendBJError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBjBean">
+        SELECT bj.*
+        FROM wsbs_bj bj, SEND_STEP_ERROR sp
+        WHERE bj.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE bj.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = BJ.SBLSH)
+    </select>
+    <select id="getExSendBJ" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBjBean">
+         SELECT bj.*
+      	FROM wsbs_bj bj, send_step sp
+      WHERE bj.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+        AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE bj.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = bj.SBLSH)
+    </select>
+    <select id="getExSendLqdjError" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsLqdjBean">
+        SELECT lqdj.*
+        FROM wsbs_lqdj lqdj, SEND_STEP_ERROR sp
+        WHERE lqdj.hjslbs = sp.mission_id
+        AND NOT EXISTS (SELECT SEND_STEP.MISSION_ID
+        FROM SEND_STEP
+        WHERE lqdj.HJSLBS = SEND_STEP.MISSION_ID)
+        and sp.send_flag = '1'
+        AND EXISTS (SELECT SS.MISSION_ID
+        FROM SEND_STEP SS, WSBS_SB SB
+        WHERE SS.MISSION_ID = SB.HJSLBS
+        AND SB.SBLSH = lqdj.SBLSH)
+    </select>
+    <select id="getExSendLqdj" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsLqdjBean">
+          SELECT lqdj.*
+      	FROM wsbs_lqdj lqdj, send_step sp
+      WHERE lqdj.hjslbs = sp.mission_id(+)
+        AND sp.mission_id is null
+         AND NOT EXISTS (SELECT SEND_STEP_ERROR.MISSION_ID
+          FROM SEND_STEP_ERROR
+         WHERE lqdj.HJSLBS = SEND_STEP_ERROR.MISSION_ID)
+         AND EXISTS (SELECT SS.MISSION_ID
+                FROM SEND_STEP SS, WSBS_SB SB
+               WHERE SS.MISSION_ID = SB.HJSLBS
+                 AND SB.SBLSH = lqdj.SBLSH)
+    </select>
+
+    <insert id="insertSendStep" parameterType="com.eshore.wbtimer.executor.mapper.bean.SendStepBean">
+        INSERT INTO SEND_STEP
+        (
+        MISSION_ID ,
+        STEP_TYPE ,
+        SEND_DATE,
+        SEND_XML
+        )
+        VALUES
+        (
+        #{missionId,jdbcType=NUMERIC} ,
+        #{stepType,jdbcType=VARCHAR} ,
+        #{sendDate,jdbcType=TIMESTAMP} ,
+        #{sendXml,jdbcType=CLOB}
+        )
+    </insert>
+    <insert id="insertExHalfProcess">
+        INSERT INTO EX_HALF_PROCESS
+        (
+        SBLSH ,
+        INIT_STEP_TYPE ,
+        CURRNT_STEP_TYPE ,
+        CREATE_DATE ,
+        LASTMODIFY_DATE ,
+        PROCESS_STATE ,
+        PROCESS_MSG ,
+        HJSLBS
+        )
+        VALUES
+        (
+        #{sblsh,jdbcType=VARCHAR} ,
+        #{initStepType,jdbcType=VARCHAR} ,
+        #{currntStepType,jdbcType=VARCHAR} ,
+        #{createDate,jdbcType=TIMESTAMP} ,
+        #{lastmodifyDate,jdbcType=TIMESTAMP} ,
+        #{processState,jdbcType=VARCHAR} ,
+        #{processMsg,jdbcType=VARCHAR} ,
+        #{hjslbs,jdbcType=NUMERIC}
+        )
+    </insert>
+
+</mapper>

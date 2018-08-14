@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="wbtimer-executor:war">
+    <output-path>$PROJECT_DIR$/wbtimer-executor/target</output-path>
+    <root id="archive" name="wbtimer-executor.war">
+      <element id="artifact" artifact-name="wbtimer-executor:war exploded" />
+    </root>
+  </artifact>
+</component>

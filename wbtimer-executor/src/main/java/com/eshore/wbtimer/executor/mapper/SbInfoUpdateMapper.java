@@ -1,0 +1,23 @@
+package com.eshore.wbtimer.executor.mapper;
+
+import com.eshore.wbtimer.executor.service.bean.ApplyOrderAlertBean;
+import com.eshore.wbtimer.executor.service.bean.SpecProgramExtBean;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 描述:
+ *
+ * @author Yangjinming
+ * @create 2018/1/29 11:26
+ */
+public interface SbInfoUpdateMapper {
+    List<Map<String,Object>> selectZCSPHoliday();
+    List<Long> qryDoingMissionSblsh();
+    List<ApplyOrderAlertBean> getOrderAlertInfo(Long hjslbs);
+    List<SpecProgramExtBean> getSuppInfo(@Param("sblsh") String sblsh, @Param("startDateStart") String startDateStart);
+    List<SpecProgramExtBean> getSpecProgramInfo(@Param("sblsh") String sblsh);
+    int updateWsbsSbPromiseBjTime(Map<String, Object> params);
+}

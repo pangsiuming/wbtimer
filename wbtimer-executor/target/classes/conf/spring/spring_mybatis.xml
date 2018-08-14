@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		">
+    <import resource="classpath:conf/db/*.xml"/>
+    <!-- conf.mybatis 集成配置 -->
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:conf/mybatis/mybatis-config.xml" />
+        <property name="typeAliasesPackage" value="com.eshore.wbtimer.executor.mapper.bean"/>
+        <property name="typeEnumsPackage" value="com.eshore.wbtimer.executor.enums"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:mapper/*Mapper.xml</value>
+            </list>
+        </property>
+        <!-- 全局配置注入 -->
+        <property name="globalConfig" ref="globalConfig" />
+    </bean>
+    <bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+        <!--
+            AUTO->`0`("数据库ID自增")
+             INPUT->`1`(用户输入ID")
+            ID_WORKER->`2`("全局唯一ID")
+            UUID->`3`("全局唯一ID")
+        -->
+        <property name="idType" value="2" />
+        <!--
+            MYSQL->`mysql`
+            ORACLE->`oracle`
+            DB2->`db2`
+            H2->`h2`
+            HSQL->`hsql`
+            SQLITE->`sqlite`
+            POSTGRE->`postgresql`
+            SQLSERVER2005->`sqlserver2005`
+            SQLSERVER->`sqlserver`
+        -->
+        <!-- Oracle需要添加该项 -->
+        <!-- <property name="dbType" value="oracle" /> -->
+        <!-- 全局表为下划线命名设置 true -->
+         <property name="dbColumnUnderline" value="true" />
+        <!--<property name="metaObjectHandler">-->
+        <!--<bean class="com.baomidou.springmvc.common.MyMetaObjectHandler" />-->
+        <!--</property>-->
+    </bean>
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+   </bean>
+
+    <!-- 配置mybatis mapper接口 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.eshore.wbtimer.*.mapper"/>
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+    </bean>
+
+    <!--使用自定义annotation定义事务-->
+    <aop:config>
+        <aop:pointcut id="dataSourceMethods" expression="execution(* com.eshore.wbtimer.executor.mapper.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="dataSourceMethods" />
+        <aop:advisor advice-ref="txAdviceEx" pointcut-ref="dataSourceMethods" />
+        <aop:advisor advice-ref="dataSourceAdvice" pointcut-ref="dataSourceMethods" />
+    </aop:config>
+    <bean id="dataSourceAdvice" class="com.eshore.wbtimer.common.datasource.DataSourceAdvice"/>
+
+    </beans>

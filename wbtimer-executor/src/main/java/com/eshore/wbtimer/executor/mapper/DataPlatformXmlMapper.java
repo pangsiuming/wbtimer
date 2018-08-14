@@ -1,0 +1,23 @@
+package com.eshore.wbtimer.executor.mapper;
+
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.eshore.wbtimer.executor.common.code.dataplatform.bean.ExHalfColsParam;
+import com.eshore.wbtimer.executor.mapper.bean.*;
+import com.eshore.wbtimer.executor.service.bean.*;
+
+import java.util.List;
+
+/**
+ * 描述:
+ *
+ * @author Yangjinming
+ * @create 2018/2/1 10:36
+ */
+public interface DataPlatformXmlMapper extends BaseMapper<FormfileuploaddataBean>{
+    List<ExHalfColsBean> getExHalfCols(ExHalfColsParam exHalfColsParam);
+    ExItemHalfBean getExItemHalf(ExItemHalfParam exItemHalfParam);
+    List<WsbsSbFilesBean> getWsbsSbFiles(WsbsSbFilesBean wsbsSbFilesBean);
+    List<WsbsSbBean> getWsbsSbInfo(WsbsSbBean wsbsSbBean);
+    List<WsbsSbExtendBean> getWsbsSbExtEndInfo(WsbsSbExtendBean wsbsSbExtendBean);
+    List<FormfileuploaddataBean> getGroupFormFileUpLoadData(FormfileuploaddataBean formfileuploaddataBean);
+}

@@ -1,0 +1,14 @@
+<ExInfo>
+	<standardInfo process="EX_GDBS_BJSL">
+		<Field FieldName='SBLSH'>申办流水号</Field>
+		<Field FieldName='SXBM'>事项编码</Field>
+		<Field FieldName='BJSLBLRXM' TargetName="bzslblrxm">补交告知发出人姓名</Field>
+		<Field FieldName='BJCLQD'>补交材料清单</Field>
+		<Field FieldName='BJSJ' TargetName="bzsj">补交时间</Field>
+		<Field FieldName='XZQHDM'>行政区划代码</Field>
+		<Field FieldName='BJSLJTDD' TargetName="bzsljtdd">补交受理具体地点</Field>
+		<Field FieldName='BZ'>备注</Field>
+		<Field FieldName='BYZD'>备用字段</Field>
+		<Field FieldName='XH'>序号</Field>
+	</standardInfo>
+</ExInfo>

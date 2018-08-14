@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.SendServiceMapper" >
+    <!-- 发改新增短信通知环节，申办后短信通知部门进行预受理  -->
+    <select id="selectFgSendRemindPreAcceptSMS" resultType="java.util.HashMap" >
+        select SQRMC,to_char(SBSJ,'yyyy-MM-dd') as SBSJ,HJSLBS,
+        (select ext.field_value
+        from wsbs_sb_extend ext
+        where sb.sblsh = ext.sblsh
+        and sb.hjslbs = ext.hjslbs
+        and ext.field_id = 'zftzxmmc'
+        )as XMMC,
+        SXMC,process.mobile
+        from wsbs_sb sb,
+        (select mobile,processinstid
+        from (select a.mobile,b.processinstid
+        from (select distinct u.mobile, e.empid pid, 'emp' ptype
+        from tb_sm_sysstaff u, org_employee e
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = e.userid(+)
+        union all
+        select distinct u.mobile, t.positionid pid, 'position' ptype
+        from tb_sm_sysstaff u,
+        (select e.empid, e.userid, p.positionid
+        from org_employee    e,
+        org_empposition ep,
+        org_position    p
+        where e.empid = ep.empid
+        and ep.positionid = p.positionid) t
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = t.userid) a,
+        (select p.participanttype, p.participantid,p.processinstid
+        from wfwiparticipant p
+        where p.participanttype in ('emp', 'position')
+        and p.activitydefid = 'PREACCEPT'
+        and p.currentstate = 4) b
+        where a.ptype = b.participanttype
+        and a.pid = b.participantid
+        union all
+        select a.mobile,w.processinstid
+        from wfwiparticipant w,
+        (select distinct u.mobile, e.empid pid, 'emp' ptype
+        from tb_sm_sysstaff u, org_employee e
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = e.userid(+)) a
+        where w.activitydefid = 'PREACCEPT'
+        and w.participant(+) = a.pid
+        and w.participanttype = 'emp'
+        and w.currentstate = 10)
+        ) process
+        where sb.processinstid = process.processinstid
+        and sb.tjfs = '1'
+        and exists(select 1 from WSBS_FGBL_INFO fg where sb.sblsh = fg.sblsh)
+        and not exists(select 1 from mission_message mission where sb.hjslbs = mission.mission_id and mission.create_name = 'FG_PREACCEPT_ALERT')
+    </select>
+
+    <select id="selectOrgMessageConfigIdByCode"  resultType="long">
+             SELECT id
+             FROM  ORG_MESSAGE_CONFIG A
+             WHERE ORG_CODE = #{orgCode,jdbcType=VARCHAR} AND TEMPLATE_CODE = #{templateCode,jdbcType=VARCHAR}
+    </select>
+    <select id="receiveWaitDealSmsSendTask" resultType="java.util.HashMap">
+        select mobile, sum(total) total
+        from (select a.mobile, sum(c) total
+        from (select distinct u.mobile, e.empid pid, 'emp' ptype
+        from tb_sm_sysstaff u, org_employee e
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = e.userid(+)
+        union all
+        select distinct u.mobile, t.positionid pid, 'position' ptype
+        from tb_sm_sysstaff u,
+        (select e.empid, e.userid, p.positionid
+        from org_employee    e,
+        org_empposition ep,
+        org_position    p
+        where e.empid = ep.empid
+        and ep.positionid = p.positionid) t
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = t.userid) a,
+        (select p.participanttype, p.participantid, sum(1) c
+        from wfwiparticipant p
+        where p.participanttype in ('emp', 'position')
+        and p.activitydefid = 'PREACCEPT'
+        and p.currentstate = 4
+        group by p.participanttype, p.participantid) b
+        where a.ptype = b.participanttype
+        and a.pid = b.participantid
+        group by a.mobile
+        union all
+        select a.mobile, sum(1) total
+        from wfwiparticipant w,
+        (select distinct u.mobile, e.empid pid, 'emp' ptype
+        from tb_sm_sysstaff u, org_employee e
+        where u.recive_waitdeal_sms = '1'
+        and u.mobile is not null
+        and u.staff_id = e.userid(+)) a
+        where w.activitydefid = 'PREACCEPT'
+        and w.participant(+) = a.pid
+        and w.participanttype = 'emp'
+        and w.currentstate = 10
+        group by a.mobile)
+        group by mobile
+    </select>
+
+    <select id="selectWsbsSbSmsNoticeSbSuccess" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT T.*
+        FROM WSBS_SB T
+        WHERE T.STAFF_ID = 'wsslStaff'
+        AND T.TJFS = '1'
+        AND T.SUBMIT_STATUS = '2'
+        AND T.PROCESSINSTID IS NOT NULL
+        AND T.PROCESSINSTID != 0
+        AND T.LXRSJ IS NOT NULL
+        AND NOT EXISTS (SELECT MM.MISSION_ID
+        FROM MISSION_MESSAGE MM
+        WHERE MM.MISSION_ID = T.HJSLBS
+        AND MM.CREATE_NAME = #{createName})
+        AND NOT EXISTS (SELECT bj.sblsh FROM wsbs_bj bj WHERE bj.sblsh=t.sblsh)
+
+    </select>
+    <select id="getMobileFromOrgMsg" parameterType="java.lang.Long" resultType="java.lang.String">
+        SELECT  (SELECT T.MOBILE FROM TB_SM_SYSSTAFF T WHERE T.STAFF_ID = A.RECEIVE_PERSON) AS MOBILE
+          FROM ORG_MSG_RECEIVE_PERSON A
+          WHERE  MSG_CONF_ID = #{msgConfId,jdbcType=DECIMAL}
+    </select>
+    <select id="getWsbsTbcxsqSpecailALeader" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean">
+        select T.SBLSH,T.HJSLBS,T.TBCXQDLY,T.CLRGH from WSBS_TBCXSQ T
+        where T.tbcxzl='A' and T.tbcxpzr is not null
+        AND NOT EXISTS (SELECT JG.PROCESSINSTID
+        FROM WSBS_TBCXJG JG
+        WHERE JG.PROCESSINSTID = T.PROCESSINSTID)
+    </select>
+    <!-- 根据申办流水号 查询得到 审批负责人的 手机号码 -->
+    <select id="getSpecailALeaderTelephone" parameterType="java.lang.Long" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean">
+   	select a.MOBILE from TB_SM_SYSSTAFF a,org_employee b,WSBS_TBCXSQ c
+       		where c.tbcxpzr=to_char(b.empid)
+      	 	and b.empcode=a.staff_id
+            and  c.HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+    </select>
+    <!--
+         alertStatus=2 办结到期超期通知当前待办处理人分管领导
+         alertStatus=1 办结到期当天通知当前待办处理人科室负责人
+     -->
+    <select id="getWsbsSbInfo" parameterType="java.util.Map" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT zzjgdm,sxmc,sqrmc,sblsh,slh,sbxmmc,lxrsj
+        FROM WSBS_SB
+        <where>
+            1=1
+            <if test="sblsh!=null">
+              AND  SBLSH =#{sblsh,jdbcType=VARCHAR}
+            </if>
+            <if test="sxbm!=null">
+               AND SXBM =#{sxbm,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="getSysStaffById" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.SysstaffBean">
+        SELECT  tss.LINK_PHONE as linkPhone ,tss.STAFF_NAME as staffName
+  		FROM tb_sm_sysstaff tss
+ 		where  staff_Id = #{staffId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSmsNoticeBzgz"  parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsBzgzBean">
+        select t.*,(SELECT S.MOBILE FROM TB_SM_SYSSTAFF S WHERE S.STAFF_ID = T.CLRGH) AS MOBILE
+        from WSBS_BZGZ t
+         where  TO_DATE(TO_CHAR(t.end_date,'yyyy-mm-dd'),'yyyy-mm-dd')-TO_DATE(TO_CHAR(SYSDATE,'yyyy-mm-dd'),'yyyy-mm-dd')= #{bz,jdbcType=VARCHAR}
+        and t.processinstid not in(select bzsl.processinstid from WSBS_BZSL bzsl)
+    </select>
+
+    <select id="getSmsNoticeSb" parameterType="java.util.Map" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+        SELECT zzjgdm,sxmc,sqrmc,sblsh,slh,sbxmmc,lxrsj
+        FROM WSBS_SB t WHERE 1=1
+        <if test="alertStatus!=null">
+           AND ALERT_STATUS = #{alertStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="restDay!=null">
+           AND REST_DAY = #{restDay,jdbcType=DECIMAL}
+        </if>
+         AND NOT EXISTS (SELECT bj.sblsh FROM wsbs_bj bj WHERE bj.sblsh=t.sblsh)
+    </select>
+    <!-- 短信下行通过流水号找当前参与者,以便拿到处理人手机号码 -->
+    <select id="getSmsNoticeActor" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbActorBean"  >
+        SELECT SB.SBLSH,
+        SB.SXBM,
+        SB.SBXMMC,
+        SB.PROCESSINSTID,
+        W.WORKITEMID,
+        W.WORKITEMNAME,
+        WP.PARTICIPANTID,
+        WP.PARTICIPANTTYPE
+        FROM WSBS_SB SB, WFWORKITEM W, WFWIPARTICIPANT WP
+        WHERE W.PROCESSINSTID = SB.PROCESSINSTID
+        AND WP.WORKITEMID = W.WORKITEMID
+        AND W.CURRENTSTATE IN (4, 10)
+        <if test="sblsh!=null">
+           AND sb.sblsh = #{sblsh,jdbcType=VARCHAR}
+        </if>
+        ORDER BY SB.SBSJ DESC
+    </select>
+
+    <select id="getSysStaffActorForemp" parameterType="java.lang.Long" resultType="com.eshore.wbtimer.executor.mapper.bean.SysstaffBean">
+        SELECT tss.*
+        ,(SELECT ORG_NAME FROM TB_SM_ORGAN WHERE ORG_ID=tss.STAFF_ORGID AND ROWNUM=1 ) AS NAME_OF_STAFF_ORGID
+        ,(SELECT CITY_NAME FROM TB_PC_CITY WHERE CITY_ID=tss.CITY_ID AND ROWNUM=1 ) AS NAME_OF_CITY_ID
+        FROM tb_sm_sysstaff tss
+        WHERE tss.staff_id IN
+        (SELECT oe.empcode FROM ORG_EMPLOYEE OE WHERE OE.EMPID = #{dutyOrgid,jdbcType=DECIMAL})
+    </select>
+    <select id="getSysStaffActorForemp2" parameterType="string" resultType="com.eshore.wbtimer.executor.mapper.bean.SysstaffBean">
+        	SELECT tss.*
+	   	,(SELECT ORG_NAME FROM TB_SM_ORGAN WHERE ORG_ID=tss.STAFF_ORGID AND ROWNUM=1 ) AS NAME_OF_STAFF_ORGID
+	   	,(SELECT CITY_NAME FROM TB_PC_CITY WHERE CITY_ID=tss.CITY_ID AND ROWNUM=1 ) AS NAME_OF_CITY_ID
+  		FROM tb_sm_sysstaff tss
+ 		WHERE tss.staff_id IN
+ 		(SELECT CON.CONTENTVALUE
+ 			FROM FRAME_TB_CONFIG_CONTENT CON, SERVICE_ITEM ITEM, WSBS_SB SB
+			WHERE CON.CONTENTCODE=ITEM.ADMIN_ORG
+			AND ITEM.SERVICE_CODE=SB.SXBM
+			AND ITEM.VERSION=SB.VERSION
+			AND SB.SBLSH = #{sblsh,jdbcType=VARCHAR})
+    </select>
+    <select id="getSysStaffActorForposition" parameterType="java.lang.Long" resultType="com.eshore.wbtimer.executor.mapper.bean.SysstaffBean" >
+        SELECT tss.*
+        ,(SELECT ORG_NAME FROM TB_SM_ORGAN WHERE ORG_ID=tss.STAFF_ORGID AND ROWNUM=1 ) AS NAME_OF_STAFF_ORGID
+        ,(SELECT CITY_NAME FROM TB_PC_CITY WHERE CITY_ID=tss.CITY_ID AND ROWNUM=1 ) AS NAME_OF_CITY_ID
+        FROM tb_sm_sysstaff tss
+        WHERE tss.staff_id IN
+        (SELECT oe.empcode FROM ORG_EMPLOYEE OE WHERE OE.EMPID IN
+        (SELECT OEP.EMPID FROM ORG_EMPPOSITION OEP WHERE OEP.POSITIONID = #{dutyOrgid,jdbcType=DECIMAL} )
+        )
+    </select>
+    <select id="getSmsNoticeTbcx" resultType="com.eshore.wbtimer.executor.mapper.bean.WsbsTbcxsqBean">
+        select t.* from WSBS_TBCXSQ t
+		where to_char(t.alert_date,'yyyy-MM-dd') = to_char(sysdate,'yyyy-MM-dd')
+		AND T.TBCXSX != 0
+        AND NOT EXISTS (SELECT JG.PROCESSINSTID
+          FROM WSBS_TBCXJG JG
+         WHERE JG.PROCESSINSTID = T.PROCESSINSTID)
+    </select>
+</mapper>

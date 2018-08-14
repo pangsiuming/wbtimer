@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eshore.wbtimer.executor.mapper.WsbsSbBeanMapper" >
+  <resultMap id="BaseResultMap" type="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean" >
+    <constructor >
+      <idArg column="HJSLBS" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBLSH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBXMMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXBM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SXMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="VERSION" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBCLQD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQRLX" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQRMC" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQRZJLX" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SQRZJHM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LXRXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LXRZJLX" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LXRSFZJHM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LXRSJ" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LXRYX" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SUBMIT_STATUS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZZJGDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="PROCESSINSTID" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="FLOW_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="FORM_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TJFS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="YSBLSH" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBJTWD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CITY_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="XZQHDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LOGINNAME" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="LAST_MODIFY_TIME" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="ALERT_STATUS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="REST_DAY" jdbcType="DECIMAL" javaType="java.lang.Short" />
+      <arg column="STAFF_ID" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BZ" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BYZD" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SBSJ" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="MOD_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="DOC_SUBMIT_TYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="WIN_INFO" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="SLH" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="REST_NATURE_DAY" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="REAL_PROMISE_DAY" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="PROMISE_BJ_DATE" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="QDFS" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZCX_ALERT_TYPE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZCX_REST_DAY" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="ZCX_QX" jdbcType="DECIMAL" javaType="java.lang.Long" />
+      <arg column="SBCKDM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CKFWRYZJHM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="CKFWRYZJXM" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="DATEWF" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="DATE0" jdbcType="DATE" javaType="java.util.Date" />
+      <arg column="RADIO1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="BLBMCODE" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TEXT6" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="TEXT7" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    HJSLBS, SBLSH, SBXMMC, SXBM, SXMC, VERSION, SBCLQD, SQRLX, SQRMC, SQRZJLX, SQRZJHM, 
+    LXRXM, LXRZJLX, LXRSFZJHM, LXRSJ, LXRYX, SUBMIT_STATUS, ZZJGDM, PROCESSINSTID, FLOW_ID, 
+    FORM_ID, TJFS, YSBLSH, SBJTWD, CITY_ID, XZQHDM, LOGINNAME, LAST_MODIFY_TIME, ALERT_STATUS, 
+    REST_DAY, STAFF_ID, BZ, BYZD, SBSJ, MOD_DATE, DOC_SUBMIT_TYPE, WIN_INFO, SLH, REST_NATURE_DAY, 
+    REAL_PROMISE_DAY, PROMISE_BJ_DATE, QDFS, ZCX_ALERT_TYPE, ZCX_REST_DAY, ZCX_QX, SBCKDM, 
+    CKFWRYZJHM, CKFWRYZJXM, DATEWF, DATE0, RADIO1, BLBMCODE, TEXT6, TEXT7
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ZH_YX_ZCSP.WSBS_SB
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </select>
+
+  <select id="selectBySblsh" resultMap="BaseResultMap" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean">
+    select *
+    FROM WSBS_SB A
+    WHERE sblsh = #{sblsh,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ZH_YX_ZCSP.WSBS_SB
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean" >
+    insert into ZH_YX_ZCSP.WSBS_SB (HJSLBS, SBLSH, SBXMMC, 
+      SXBM, SXMC, VERSION, 
+      SBCLQD, SQRLX, SQRMC, 
+      SQRZJLX, SQRZJHM, LXRXM, 
+      LXRZJLX, LXRSFZJHM, LXRSJ, 
+      LXRYX, SUBMIT_STATUS, ZZJGDM, 
+      PROCESSINSTID, FLOW_ID, FORM_ID, 
+      TJFS, YSBLSH, SBJTWD, 
+      CITY_ID, XZQHDM, LOGINNAME, 
+      LAST_MODIFY_TIME, ALERT_STATUS, REST_DAY, 
+      STAFF_ID, BZ, BYZD, 
+      SBSJ, MOD_DATE, DOC_SUBMIT_TYPE, 
+      WIN_INFO, SLH, REST_NATURE_DAY, 
+      REAL_PROMISE_DAY, PROMISE_BJ_DATE, QDFS, 
+      ZCX_ALERT_TYPE, ZCX_REST_DAY, ZCX_QX, 
+      SBCKDM, CKFWRYZJHM, CKFWRYZJXM, 
+      DATEWF, DATE0, RADIO1, BLBMCODE, 
+      TEXT6, TEXT7)
+    values (#{hjslbs,jdbcType=DECIMAL}, #{sblsh,jdbcType=VARCHAR}, #{sbxmmc,jdbcType=VARCHAR}, 
+      #{sxbm,jdbcType=VARCHAR}, #{sxmc,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, 
+      #{sbclqd,jdbcType=VARCHAR}, #{sqrlx,jdbcType=VARCHAR}, #{sqrmc,jdbcType=VARCHAR}, 
+      #{sqrzjlx,jdbcType=VARCHAR}, #{sqrzjhm,jdbcType=VARCHAR}, #{lxrxm,jdbcType=VARCHAR}, 
+      #{lxrzjlx,jdbcType=VARCHAR}, #{lxrsfzjhm,jdbcType=VARCHAR}, #{lxrsj,jdbcType=VARCHAR}, 
+      #{lxryx,jdbcType=VARCHAR}, #{submitStatus,jdbcType=VARCHAR}, #{zzjgdm,jdbcType=VARCHAR}, 
+      #{processinstid,jdbcType=DECIMAL}, #{flowId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
+      #{tjfs,jdbcType=VARCHAR}, #{ysblsh,jdbcType=DECIMAL}, #{sbjtwd,jdbcType=VARCHAR}, 
+      #{cityId,jdbcType=VARCHAR}, #{xzqhdm,jdbcType=VARCHAR}, #{loginname,jdbcType=VARCHAR}, 
+      #{lastModifyTime,jdbcType=DATE}, #{alertStatus,jdbcType=VARCHAR}, #{restDay,jdbcType=DECIMAL}, 
+      #{staffId,jdbcType=VARCHAR}, #{bz,jdbcType=VARCHAR}, #{byzd,jdbcType=VARCHAR}, 
+      #{sbsj,jdbcType=DATE}, #{modDate,jdbcType=DATE}, #{docSubmitType,jdbcType=VARCHAR}, 
+      #{winInfo,jdbcType=VARCHAR}, #{slh,jdbcType=VARCHAR}, #{restNatureDay,jdbcType=DECIMAL}, 
+      #{realPromiseDay,jdbcType=DECIMAL}, #{promiseBjDate,jdbcType=DATE}, #{qdfs,jdbcType=VARCHAR}, 
+      #{zcxAlertType,jdbcType=VARCHAR}, #{zcxRestDay,jdbcType=VARCHAR}, #{zcxQx,jdbcType=DECIMAL}, 
+      #{sbckdm,jdbcType=VARCHAR}, #{ckfwryzjhm,jdbcType=VARCHAR}, #{ckfwryzjxm,jdbcType=VARCHAR}, 
+      #{datewf,jdbcType=DATE}, #{date0,jdbcType=DATE}, #{radio1,jdbcType=VARCHAR}, #{blbmcode,jdbcType=VARCHAR}, 
+      #{text6,jdbcType=VARCHAR}, #{text7,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean" >
+    insert into ZH_YX_ZCSP.WSBS_SB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        HJSLBS,
+      </if>
+      <if test="sblsh != null" >
+        SBLSH,
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC,
+      </if>
+      <if test="sxbm != null" >
+        SXBM,
+      </if>
+      <if test="sxmc != null" >
+        SXMC,
+      </if>
+      <if test="version != null" >
+        VERSION,
+      </if>
+      <if test="sbclqd != null" >
+        SBCLQD,
+      </if>
+      <if test="sqrlx != null" >
+        SQRLX,
+      </if>
+      <if test="sqrmc != null" >
+        SQRMC,
+      </if>
+      <if test="sqrzjlx != null" >
+        SQRZJLX,
+      </if>
+      <if test="sqrzjhm != null" >
+        SQRZJHM,
+      </if>
+      <if test="lxrxm != null" >
+        LXRXM,
+      </if>
+      <if test="lxrzjlx != null" >
+        LXRZJLX,
+      </if>
+      <if test="lxrsfzjhm != null" >
+        LXRSFZJHM,
+      </if>
+      <if test="lxrsj != null" >
+        LXRSJ,
+      </if>
+      <if test="lxryx != null" >
+        LXRYX,
+      </if>
+      <if test="submitStatus != null" >
+        SUBMIT_STATUS,
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM,
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID,
+      </if>
+      <if test="flowId != null" >
+        FLOW_ID,
+      </if>
+      <if test="formId != null" >
+        FORM_ID,
+      </if>
+      <if test="tjfs != null" >
+        TJFS,
+      </if>
+      <if test="ysblsh != null" >
+        YSBLSH,
+      </if>
+      <if test="sbjtwd != null" >
+        SBJTWD,
+      </if>
+      <if test="cityId != null" >
+        CITY_ID,
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM,
+      </if>
+      <if test="loginname != null" >
+        LOGINNAME,
+      </if>
+      <if test="lastModifyTime != null" >
+        LAST_MODIFY_TIME,
+      </if>
+      <if test="alertStatus != null" >
+        ALERT_STATUS,
+      </if>
+      <if test="restDay != null" >
+        REST_DAY,
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID,
+      </if>
+      <if test="bz != null" >
+        BZ,
+      </if>
+      <if test="byzd != null" >
+        BYZD,
+      </if>
+      <if test="sbsj != null" >
+        SBSJ,
+      </if>
+      <if test="modDate != null" >
+        MOD_DATE,
+      </if>
+      <if test="docSubmitType != null" >
+        DOC_SUBMIT_TYPE,
+      </if>
+      <if test="winInfo != null" >
+        WIN_INFO,
+      </if>
+      <if test="slh != null" >
+        SLH,
+      </if>
+      <if test="restNatureDay != null" >
+        REST_NATURE_DAY,
+      </if>
+      <if test="realPromiseDay != null" >
+        REAL_PROMISE_DAY,
+      </if>
+      <if test="promiseBjDate != null" >
+        PROMISE_BJ_DATE,
+      </if>
+      <if test="qdfs != null" >
+        QDFS,
+      </if>
+      <if test="zcxAlertType != null" >
+        ZCX_ALERT_TYPE,
+      </if>
+      <if test="zcxRestDay != null" >
+        ZCX_REST_DAY,
+      </if>
+      <if test="zcxQx != null" >
+        ZCX_QX,
+      </if>
+      <if test="sbckdm != null" >
+        SBCKDM,
+      </if>
+      <if test="ckfwryzjhm != null" >
+        CKFWRYZJHM,
+      </if>
+      <if test="ckfwryzjxm != null" >
+        CKFWRYZJXM,
+      </if>
+      <if test="datewf != null" >
+        DATEWF,
+      </if>
+      <if test="date0 != null" >
+        DATE0,
+      </if>
+      <if test="radio1 != null" >
+        RADIO1,
+      </if>
+      <if test="blbmcode != null" >
+        BLBMCODE,
+      </if>
+      <if test="text6 != null" >
+        TEXT6,
+      </if>
+      <if test="text7 != null" >
+        TEXT7,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hjslbs != null" >
+        #{hjslbs,jdbcType=DECIMAL},
+      </if>
+      <if test="sblsh != null" >
+        #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="sxmc != null" >
+        #{sxmc,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="sbclqd != null" >
+        #{sbclqd,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrlx != null" >
+        #{sqrlx,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrmc != null" >
+        #{sqrmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrzjlx != null" >
+        #{sqrzjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrzjhm != null" >
+        #{sqrzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrxm != null" >
+        #{lxrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrzjlx != null" >
+        #{lxrzjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrsfzjhm != null" >
+        #{lxrsfzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrsj != null" >
+        #{lxrsj,jdbcType=VARCHAR},
+      </if>
+      <if test="lxryx != null" >
+        #{lxryx,jdbcType=VARCHAR},
+      </if>
+      <if test="submitStatus != null" >
+        #{submitStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="flowId != null" >
+        #{flowId,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        #{formId,jdbcType=VARCHAR},
+      </if>
+      <if test="tjfs != null" >
+        #{tjfs,jdbcType=VARCHAR},
+      </if>
+      <if test="ysblsh != null" >
+        #{ysblsh,jdbcType=DECIMAL},
+      </if>
+      <if test="sbjtwd != null" >
+        #{sbjtwd,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="loginname != null" >
+        #{loginname,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=DATE},
+      </if>
+      <if test="alertStatus != null" >
+        #{alertStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="restDay != null" >
+        #{restDay,jdbcType=DECIMAL},
+      </if>
+      <if test="staffId != null" >
+        #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="sbsj != null" >
+        #{sbsj,jdbcType=DATE},
+      </if>
+      <if test="modDate != null" >
+        #{modDate,jdbcType=DATE},
+      </if>
+      <if test="docSubmitType != null" >
+        #{docSubmitType,jdbcType=VARCHAR},
+      </if>
+      <if test="winInfo != null" >
+        #{winInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="slh != null" >
+        #{slh,jdbcType=VARCHAR},
+      </if>
+      <if test="restNatureDay != null" >
+        #{restNatureDay,jdbcType=DECIMAL},
+      </if>
+      <if test="realPromiseDay != null" >
+        #{realPromiseDay,jdbcType=DECIMAL},
+      </if>
+      <if test="promiseBjDate != null" >
+        #{promiseBjDate,jdbcType=DATE},
+      </if>
+      <if test="qdfs != null" >
+        #{qdfs,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxAlertType != null" >
+        #{zcxAlertType,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxRestDay != null" >
+        #{zcxRestDay,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxQx != null" >
+        #{zcxQx,jdbcType=DECIMAL},
+      </if>
+      <if test="sbckdm != null" >
+        #{sbckdm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjhm != null" >
+        #{ckfwryzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjxm != null" >
+        #{ckfwryzjxm,jdbcType=VARCHAR},
+      </if>
+      <if test="datewf != null" >
+        #{datewf,jdbcType=DATE},
+      </if>
+      <if test="date0 != null" >
+        #{date0,jdbcType=DATE},
+      </if>
+      <if test="radio1 != null" >
+        #{radio1,jdbcType=VARCHAR},
+      </if>
+      <if test="blbmcode != null" >
+        #{blbmcode,jdbcType=VARCHAR},
+      </if>
+      <if test="text6 != null" >
+        #{text6,jdbcType=VARCHAR},
+      </if>
+      <if test="text7 != null" >
+        #{text7,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean" >
+    update ZH_YX_ZCSP.WSBS_SB
+    <set >
+      <if test="sblsh != null" >
+        SBLSH = #{sblsh,jdbcType=VARCHAR},
+      </if>
+      <if test="sbxmmc != null" >
+        SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sxbm != null" >
+        SXBM = #{sxbm,jdbcType=VARCHAR},
+      </if>
+      <if test="sxmc != null" >
+        SXMC = #{sxmc,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        VERSION = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="sbclqd != null" >
+        SBCLQD = #{sbclqd,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrlx != null" >
+        SQRLX = #{sqrlx,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrmc != null" >
+        SQRMC = #{sqrmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrzjlx != null" >
+        SQRZJLX = #{sqrzjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="sqrzjhm != null" >
+        SQRZJHM = #{sqrzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrxm != null" >
+        LXRXM = #{lxrxm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrzjlx != null" >
+        LXRZJLX = #{lxrzjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrsfzjhm != null" >
+        LXRSFZJHM = #{lxrsfzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrsj != null" >
+        LXRSJ = #{lxrsj,jdbcType=VARCHAR},
+      </if>
+      <if test="lxryx != null" >
+        LXRYX = #{lxryx,jdbcType=VARCHAR},
+      </if>
+      <if test="submitStatus != null" >
+        SUBMIT_STATUS = #{submitStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="zzjgdm != null" >
+        ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="processinstid != null" >
+        PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      </if>
+      <if test="flowId != null" >
+        FLOW_ID = #{flowId,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        FORM_ID = #{formId,jdbcType=VARCHAR},
+      </if>
+      <if test="tjfs != null" >
+        TJFS = #{tjfs,jdbcType=VARCHAR},
+      </if>
+      <if test="ysblsh != null" >
+        YSBLSH = #{ysblsh,jdbcType=DECIMAL},
+      </if>
+      <if test="sbjtwd != null" >
+        SBJTWD = #{sbjtwd,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        CITY_ID = #{cityId,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqhdm != null" >
+        XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      </if>
+      <if test="loginname != null" >
+        LOGINNAME = #{loginname,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        LAST_MODIFY_TIME = #{lastModifyTime,jdbcType=DATE},
+      </if>
+      <if test="alertStatus != null" >
+        ALERT_STATUS = #{alertStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="restDay != null" >
+        REST_DAY = #{restDay,jdbcType=DECIMAL},
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        BZ = #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="byzd != null" >
+        BYZD = #{byzd,jdbcType=VARCHAR},
+      </if>
+      <if test="sbsj != null" >
+        SBSJ = #{sbsj,jdbcType=DATE},
+      </if>
+      <if test="modDate != null" >
+        MOD_DATE = #{modDate,jdbcType=DATE},
+      </if>
+      <if test="docSubmitType != null" >
+        DOC_SUBMIT_TYPE = #{docSubmitType,jdbcType=VARCHAR},
+      </if>
+      <if test="winInfo != null" >
+        WIN_INFO = #{winInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="slh != null" >
+        SLH = #{slh,jdbcType=VARCHAR},
+      </if>
+      <if test="restNatureDay != null" >
+        REST_NATURE_DAY = #{restNatureDay,jdbcType=DECIMAL},
+      </if>
+      <if test="realPromiseDay != null" >
+        REAL_PROMISE_DAY = #{realPromiseDay,jdbcType=DECIMAL},
+      </if>
+      <if test="promiseBjDate != null" >
+        PROMISE_BJ_DATE = #{promiseBjDate,jdbcType=DATE},
+      </if>
+      <if test="qdfs != null" >
+        QDFS = #{qdfs,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxAlertType != null" >
+        ZCX_ALERT_TYPE = #{zcxAlertType,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxRestDay != null" >
+        ZCX_REST_DAY = #{zcxRestDay,jdbcType=VARCHAR},
+      </if>
+      <if test="zcxQx != null" >
+        ZCX_QX = #{zcxQx,jdbcType=DECIMAL},
+      </if>
+      <if test="sbckdm != null" >
+        SBCKDM = #{sbckdm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjhm != null" >
+        CKFWRYZJHM = #{ckfwryzjhm,jdbcType=VARCHAR},
+      </if>
+      <if test="ckfwryzjxm != null" >
+        CKFWRYZJXM = #{ckfwryzjxm,jdbcType=VARCHAR},
+      </if>
+      <if test="datewf != null" >
+        DATEWF = #{datewf,jdbcType=DATE},
+      </if>
+      <if test="date0 != null" >
+        DATE0 = #{date0,jdbcType=DATE},
+      </if>
+      <if test="radio1 != null" >
+        RADIO1 = #{radio1,jdbcType=VARCHAR},
+      </if>
+      <if test="blbmcode != null" >
+        BLBMCODE = #{blbmcode,jdbcType=VARCHAR},
+      </if>
+      <if test="text6 != null" >
+        TEXT6 = #{text6,jdbcType=VARCHAR},
+      </if>
+      <if test="text7 != null" >
+        TEXT7 = #{text7,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eshore.wbtimer.executor.mapper.bean.WsbsSbBean" >
+    update ZH_YX_ZCSP.WSBS_SB
+    set SBLSH = #{sblsh,jdbcType=VARCHAR},
+      SBXMMC = #{sbxmmc,jdbcType=VARCHAR},
+      SXBM = #{sxbm,jdbcType=VARCHAR},
+      SXMC = #{sxmc,jdbcType=VARCHAR},
+      VERSION = #{version,jdbcType=VARCHAR},
+      SBCLQD = #{sbclqd,jdbcType=VARCHAR},
+      SQRLX = #{sqrlx,jdbcType=VARCHAR},
+      SQRMC = #{sqrmc,jdbcType=VARCHAR},
+      SQRZJLX = #{sqrzjlx,jdbcType=VARCHAR},
+      SQRZJHM = #{sqrzjhm,jdbcType=VARCHAR},
+      LXRXM = #{lxrxm,jdbcType=VARCHAR},
+      LXRZJLX = #{lxrzjlx,jdbcType=VARCHAR},
+      LXRSFZJHM = #{lxrsfzjhm,jdbcType=VARCHAR},
+      LXRSJ = #{lxrsj,jdbcType=VARCHAR},
+      LXRYX = #{lxryx,jdbcType=VARCHAR},
+      SUBMIT_STATUS = #{submitStatus,jdbcType=VARCHAR},
+      ZZJGDM = #{zzjgdm,jdbcType=VARCHAR},
+      PROCESSINSTID = #{processinstid,jdbcType=DECIMAL},
+      FLOW_ID = #{flowId,jdbcType=VARCHAR},
+      FORM_ID = #{formId,jdbcType=VARCHAR},
+      TJFS = #{tjfs,jdbcType=VARCHAR},
+      YSBLSH = #{ysblsh,jdbcType=DECIMAL},
+      SBJTWD = #{sbjtwd,jdbcType=VARCHAR},
+      CITY_ID = #{cityId,jdbcType=VARCHAR},
+      XZQHDM = #{xzqhdm,jdbcType=VARCHAR},
+      LOGINNAME = #{loginname,jdbcType=VARCHAR},
+      LAST_MODIFY_TIME = #{lastModifyTime,jdbcType=DATE},
+      ALERT_STATUS = #{alertStatus,jdbcType=VARCHAR},
+      REST_DAY = #{restDay,jdbcType=DECIMAL},
+      STAFF_ID = #{staffId,jdbcType=VARCHAR},
+      BZ = #{bz,jdbcType=VARCHAR},
+      BYZD = #{byzd,jdbcType=VARCHAR},
+      SBSJ = #{sbsj,jdbcType=DATE},
+      MOD_DATE = #{modDate,jdbcType=DATE},
+      DOC_SUBMIT_TYPE = #{docSubmitType,jdbcType=VARCHAR},
+      WIN_INFO = #{winInfo,jdbcType=VARCHAR},
+      SLH = #{slh,jdbcType=VARCHAR},
+      REST_NATURE_DAY = #{restNatureDay,jdbcType=DECIMAL},
+      REAL_PROMISE_DAY = #{realPromiseDay,jdbcType=DECIMAL},
+      PROMISE_BJ_DATE = #{promiseBjDate,jdbcType=DATE},
+      QDFS = #{qdfs,jdbcType=VARCHAR},
+      ZCX_ALERT_TYPE = #{zcxAlertType,jdbcType=VARCHAR},
+      ZCX_REST_DAY = #{zcxRestDay,jdbcType=VARCHAR},
+      ZCX_QX = #{zcxQx,jdbcType=DECIMAL},
+      SBCKDM = #{sbckdm,jdbcType=VARCHAR},
+      CKFWRYZJHM = #{ckfwryzjhm,jdbcType=VARCHAR},
+      CKFWRYZJXM = #{ckfwryzjxm,jdbcType=VARCHAR},
+      DATEWF = #{datewf,jdbcType=DATE},
+      DATE0 = #{date0,jdbcType=DATE},
+      RADIO1 = #{radio1,jdbcType=VARCHAR},
+      BLBMCODE = #{blbmcode,jdbcType=VARCHAR},
+      TEXT6 = #{text6,jdbcType=VARCHAR},
+      TEXT7 = #{text7,jdbcType=VARCHAR}
+    where HJSLBS = #{hjslbs,jdbcType=DECIMAL}
+  </update>
+</mapper>
